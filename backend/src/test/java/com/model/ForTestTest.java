@@ -3,6 +3,7 @@ package com.model;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
@@ -46,5 +47,13 @@ public class ForTestTest {
     public void setAge() {
         forTest.setAge(78);
         Assert.assertEquals(78, forTest.getAge());
+    }
+
+    @Test
+    public void mockitoTest() {
+        ForTest mockitoObj = Mockito.mock(ForTest.class);
+
+        Mockito.when(mockitoObj.getId()).thenReturn(0);
+        Assert.assertEquals(0, mockitoObj.getId());
     }
 }
