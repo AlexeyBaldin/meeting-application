@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-lesson1.yaml
+  - changeSet:
+      id: 1
+      author: alexey_baldin
+      changes:
+        - createTable:
+            tableName: liquibase
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: lname
+                  type: varchar(50)
+                  constraints:
+                    unique: false
+                    nullable: false
+  - changeSet:
+      id: 2
+      author: alexey_baldin
+      comment: "Insert test"
+      changes:
+        - insert:
+            tableName: liquibase
+            columns:
+              - column:
+                  name: lname
+                  value: "admin"
+        - insert:
+            tableName: liquibase
+            columns:
+              - column:
+                  name: lname
+                  value: "guest"
+      rollback:
+        - delete:
+            tableName: liquibase
+            where: username in ('admin', 'guest')
