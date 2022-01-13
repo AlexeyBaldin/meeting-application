@@ -1,8 +1,8 @@
-#Meeting Application - Netcracker Control Project
+# Meeting Application - Netcracker Control Project
 
 
 
 
 
 
-##©Alexey Baldin, 2022
+## ©Alexey Baldin, 2022
