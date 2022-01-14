@@ -1,4 +1,4 @@
-# Meeting Application - Netcracker Control Project
+# Meeting Application - Courses Control Project
 
 
 
