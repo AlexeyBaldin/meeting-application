@@ -53,7 +53,7 @@ public class ForTestTest {
     public void mockitoTest() {
         ForTest mockitoObj = Mockito.mock(ForTest.class);
 
-        Mockito.when(mockitoObj.getId()).thenReturn(0);
-        Assert.assertEquals(0, mockitoObj.getId());
+        Mockito.when(mockitoObj.getId()).thenReturn(3);
+        Assert.assertEquals(3, mockitoObj.getId());
     }
 }
