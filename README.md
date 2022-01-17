@@ -7,7 +7,6 @@
     + [Description](#Description)
     + [Features](#Features)
 2. [Technologies](#Technologies)
-3. [Me](#AlexeyBaldin)
 
 
 ## About
