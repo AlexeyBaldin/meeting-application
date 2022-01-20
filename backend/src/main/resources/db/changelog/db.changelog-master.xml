@@ -1,0 +1,275 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+    
+    <changeSet id="1" author="alexey_baldin">
+        <createTable tableName="office">
+            <column name="office_id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_office"/>
+            </column>
+            <column name="office_city" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="office_address" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="office_phone" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="office_open" type="TIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="office_close" type="TIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="alexey_baldin">
+        <createTable tableName="room">
+            <column name="room_id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_room"/>
+            </column>
+            <column name="office_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="room_capacity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="room" baseColumnNames="office_id" constraintName="fk_room"
+                                 referencedTableName="office" referencedColumnNames="office_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+
+        <sql>
+            ALTER TABLE room ADD CONSTRAINT capacity_check CHECK (room_capacity >= 0)
+        </sql>
+    </changeSet>
+
+    <changeSet id="3" author="alexey_baldin">
+        <createTable tableName="items">
+            <column name="item_id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_items"/>
+            </column>
+            <column name="office_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_count" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint baseTableName="items" baseColumnNames="office_id" constraintName="fk_items"
+                                 referencedTableName="office" referencedColumnNames="office_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+        
+        <sql>
+            ALTER TABLE items ADD CONSTRAINT count_check CHECK (item_count >= 0)
+        </sql>
+    </changeSet>
+
+    <changeSet id="4" author="alexey_baldin">
+        <createTable tableName="room_inventory">
+            <column name="item_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_room_inventory"/>
+            </column>
+            <column name="room_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_room_inventory"/>
+            </column>
+            <column name="item_count" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="room_inventory" baseColumnNames="room_id" constraintName="fk_room_room_inventory"
+                                 referencedTableName="room" referencedColumnNames="room_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="room_inventory" baseColumnNames="item_id" constraintName="fk_items_room_inventory"
+                                 referencedTableName="items" referencedColumnNames="item_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+
+        <sql>
+            ALTER TABLE room_inventory ADD CONSTRAINT count_check CHECK (item_count >= 0)
+        </sql>
+    </changeSet>
+    
+    <changeSet id="5" author="alexey_baldin">
+        <createTable tableName="role_type">
+            <column name="role_id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role_type"/>
+            </column>
+
+            <column name="role_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="6" author="alexey_baldin">
+        <createTable tableName="employee">
+            <column name="employee_id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_employee"/>
+            </column>
+            <column name="employee_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_position" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_email" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="office_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="employee" baseColumnNames="office_id" constraintName="fk_employee"
+                                 referencedTableName="office" referencedColumnNames="office_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="7" author="alexey_baldin">
+        <createTable tableName="user_data">
+            <column name="user_login" type="VARCHAR(30)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user"/>
+            </column>
+            <column name="user_password" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_activation" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="user_data" baseColumnNames="employee_id" constraintName="fk_user_data"
+                                 referencedTableName="employee" referencedColumnNames="employee_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="8" author="alexey_baldin">
+        <createTable tableName="employee_role">
+            <column name="employee_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_employee_role"/>
+            </column>
+            <column name="role_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_employee_role"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="employee_role" baseColumnNames="employee_id" constraintName="fk_employee_employee_role"
+                                 referencedTableName="employee" referencedColumnNames="employee_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="employee_role" baseColumnNames="role_id" constraintName="fk_role_employee_role"
+                                 referencedTableName="role_type" referencedColumnNames="role_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="9" author="alexey_baldin">
+        <createTable tableName="meeting">
+            <column name="meeting_id" type="SERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_meeting"/>
+            </column>
+            <column name="meeting_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="room_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="office_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="meeting_start" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="meeting_end" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="meeting" baseColumnNames="room_id" constraintName="fk_room_meeting"
+                                 referencedTableName="room" referencedColumnNames="room_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="meeting" baseColumnNames="office_id" constraintName="fk_office_meeting"
+                                 referencedTableName="office" referencedColumnNames="office_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="10" author="alexey_baldin">
+        <createTable tableName="invite">
+            <column name="employee_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_invite"/>
+            </column>
+            <column name="meeting_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_invite"/>
+            </column>
+            <column name="invite_accept" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="invite" baseColumnNames="employee_id" constraintName="fk_employee_invite"
+                                 referencedTableName="employee" referencedColumnNames="employee_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="invite" baseColumnNames="meeting_id" constraintName="fk_meeting_invite"
+                                 referencedTableName="meeting" referencedColumnNames="meeting_id"
+                                 onUpdate="CASCADE" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="11" author="alexey_baldin">
+        <insert tableName="office">
+            <column name="office_city" value="Default City"/>
+            <column name="office_address" value="Central Office"/>
+            <column name="office_phone" value="77777777777"/>
+            <column name="office_open" value="06:00:00"/>
+            <column name="office_close" value="22:00:00"/>
+        </insert>
+
+        <insert tableName="role_type">
+            <column name="role_name" value="admin"/>
+        </insert>
+
+        <insert tableName="employee">
+            <column name="employee_name" value="admin"/>
+            <column name="employee_position" value="admin"/>
+            <column name="employee_email" value="admin@admin.admin"/>
+            <column name="office_id" value="1"/>
+        </insert>
+
+        <insert tableName="user_data">
+            <column name="user_login" value="admin"/>
+            <column name="user_password" value="12345"/>
+            <column name="employee_id" value="1"/>
+        </insert>
+
+        <insert tableName="employee_role">
+            <column name="employee_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+
+        <rollback>
+            DELETE FROM office WHERE office_id = 1;
+            DELETE FROM role_type WHERE role_id = 1;
+        </rollback>
+    </changeSet>
+
+
+
+
+    
+</databaseChangeLog>
