@@ -29,25 +29,7 @@ public class Employee {
     @Column(name = "employee_email")
     private String email;
 
-    @ManyToMany
-    @JoinTable(name = "employee_role",
-               joinColumns = @JoinColumn(name = "employee_id"),
-               inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> employeeRole;
-
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Invite> invites;
 
-
-    public Boolean checkRole(Role role) {
-        return employeeRole.contains(role);
-    }
-
-    public void addRole(Role role) {
-        employeeRole.add(role);
-    }
-
-    public void deleteRole(Role role) {
-        employeeRole.remove(role);
-    }
 }

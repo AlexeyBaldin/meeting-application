@@ -23,6 +23,10 @@ public class RoleService {
         return roleRepository.findById(roleId).orElse(null);
     }
 
+    public Role findRoleByName(String roleName) {
+        return roleRepository.findByName(roleName);
+    }
+
     public void saveNewRole(Role newRole) {
         roleRepository.save(newRole);
     }
@@ -31,7 +35,7 @@ public class RoleService {
         Role role = findRoleById(roleId);
 
         newRole.setId(roleId);
-        newRole.setEmployees(role.getEmployees());
+        newRole.setUsers(role.getUsers());
 
         roleRepository.save(newRole);
     }

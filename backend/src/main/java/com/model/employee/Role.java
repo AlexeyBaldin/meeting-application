@@ -19,7 +19,7 @@ public class Role {
     @Column(name = "role_name")
     private String name;
 
-    @ManyToMany(mappedBy = "employeeRole")
+    @ManyToMany(mappedBy = "roles")
     @JsonIgnore
-    List<Employee> employees;
+    List<User> users;
 }

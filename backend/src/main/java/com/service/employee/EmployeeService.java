@@ -39,15 +39,14 @@ public class EmployeeService {
         return employeeRepository.findById(employeeId).orElse(null);
     }
 
-    public void saveEmployee(Employee newEmployee) {
-        employeeRepository.save(newEmployee);
+    public Employee saveEmployee(Employee newEmployee) {
+        return employeeRepository.save(newEmployee);
     }
 
     public void updateEmployee(Integer employeeId, Employee newEmployee) {
         Employee employee = findEmployeeById(employeeId);
 
         newEmployee.setId(employeeId);
-        newEmployee.setEmployeeRole(employee.getEmployeeRole());
         newEmployee.setInvites(employee.getInvites());
 
         saveEmployee(newEmployee);
@@ -57,27 +56,6 @@ public class EmployeeService {
         Employee employee = findEmployeeById(employeeId);
 
         employeeRepository.delete(employee);
-    }
-
-    public List<Role> findEmployeeRoleByEmployeeId(Integer employeeId) {
-        Employee employee = findEmployeeById(employeeId);
-        return employee.getEmployeeRole();
-    }
-
-    public void saveNewEmployeeRole(Integer employeeId, Integer roleId) {
-        Employee employee = findEmployeeById(employeeId);
-        Role role = roleService.findRoleById(roleId);
-
-        employee.addRole(role);
-        saveEmployee(employee);
-    }
-
-    public void deleteEmployeeRole(Integer employeeId, Integer roleId) {
-        Employee employee = findEmployeeById(employeeId);
-        Role role = roleService.findRoleById(roleId);
-
-        employee.deleteRole(role);
-        saveEmployee(employee);
     }
 
     private String checkEmployeeNameAndGetError(String employeeName) {
@@ -114,23 +92,8 @@ public class EmployeeService {
             errors.put("field(position) error", check);
         }
 
-
         return errors;
     }
 
-    public Map<String, Object> checkEmployeeRoleAndGetErrorsMap(Boolean exist, Integer employeeId, Integer roleId) {
-        Map<String, Object> errors = new HashMap<>();
-        Employee employee = findEmployeeById(employeeId);
-        Role role = roleService.findRoleById(roleId);
 
-        if(employee.checkRole(role) && exist) {
-            errors.put("employee role error", "employee with id = " + employeeId + " already in role with id = " + roleId);
-        }
-
-        if(!employee.checkRole(role) && !exist) {
-            errors.put("employee role error", "employee with id = " + employeeId + " not in role with id = " + roleId);
-        }
-
-        return errors;
-    }
 }

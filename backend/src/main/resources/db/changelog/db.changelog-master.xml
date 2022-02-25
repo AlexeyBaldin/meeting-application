@@ -146,10 +146,10 @@
             <column name="employee_id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user"/>
             </column>
-            <column name="user_password" type="BIGINT">
+            <column name="user_password" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_login" type="VARCHAR(30)">
+            <column name="user_username" type="VARCHAR(30)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="user_activation" type="BOOLEAN" defaultValue="false">
@@ -163,20 +163,20 @@
     </changeSet>
 
     <changeSet id="8" author="alexey_baldin">
-        <createTable tableName="employee_role">
+        <createTable tableName="user_role">
             <column name="employee_id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_employee_role"/>
             </column>
             <column name="role_id" type="INTEGER">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_employee_role"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_role"/>
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="employee_role" baseColumnNames="employee_id" constraintName="fk_employee_employee_role"
-                                 referencedTableName="employee" referencedColumnNames="employee_id"
+        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="employee_id" constraintName="fk_employee_user_role"
+                                 referencedTableName="user_data" referencedColumnNames="employee_id"
                                  onUpdate="CASCADE" onDelete="CASCADE"/>
 
-        <addForeignKeyConstraint baseTableName="employee_role" baseColumnNames="role_id" constraintName="fk_role_employee_role"
+        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="role_id" constraintName="fk_role_user_role"
                                  referencedTableName="role_type" referencedColumnNames="role_id"
                                  onUpdate="CASCADE" onDelete="CASCADE"/>
     </changeSet>
@@ -250,11 +250,11 @@
         </insert>
 
         <insert tableName="role_type">
-            <column name="role_name" value="admin"/>
+            <column name="role_name" value="ROLE_ADMIN"/>
         </insert>
 
         <insert tableName="role_type">
-            <column name="role_name" value="user"/>
+            <column name="role_name" value="ROLE_USER"/>
         </insert>
 
         <insert tableName="employee">
@@ -266,11 +266,11 @@
 
         <insert tableName="user_data">
             <column name="employee_id" value="1"/>
-            <column name="user_login" value="admin"/>
-            <column name="user_password" value="12345"/>
+            <column name="user_username" value="admin"/>
+            <column name="user_password" value="$2a$12$wDzmNMTjpzYR5jsyOHHsz.wuUIMAC0sBJ3FsaGd648XfBlmj77Tjm"/>
         </insert>
 
-        <insert tableName="employee_role">
+        <insert tableName="user_role">
             <column name="employee_id" value="1"/>
             <column name="role_id" value="1"/>
         </insert>

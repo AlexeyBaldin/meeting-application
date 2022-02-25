@@ -2,8 +2,10 @@ package com.controller;
 
 import com.model.employee.Employee;
 import com.model.employee.Role;
+import com.model.employee.User;
 import com.service.employee.EmployeeService;
 import com.service.employee.RoleService;
+import com.service.employee.UserService;
 import com.service.office.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,9 @@ public class EmployeeRestController {
     RoleService roleService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     OfficeService officeService;
 
     @GetMapping("/all")
@@ -41,13 +46,22 @@ public class EmployeeRestController {
         }
     }
 
-    @GetMapping("/{employee_id}/roles")
-    public ResponseEntity<List<Role>> findEmployeeRoleById(@PathVariable(value = "employee_id") Integer employeeId) {
-        if(employeeService.isEmployeeExist(employeeId)) {
-            List<Role> roles = employeeService.findEmployeeRoleByEmployeeId(employeeId);
-            return ResponseEntity.ok().body(roles);
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, Object>> registerEmployee(@RequestBody Employee newEmployee) {
+
+        Map<String, Object> responseMap = employeeService.checkEmployeeAndGetErrorsMap(newEmployee);
+
+        if(responseMap.isEmpty()) {
+            Employee employee = employeeService.saveEmployee(newEmployee);
+            User newUser = new User(newEmployee.getName().replaceAll(" ", ""), newEmployee.getName().replaceAll(" ", ""));
+            newUser.setId(employee.getId());
+            userService.register(newUser);
+
+            responseMap.put("success", true);
+            return ResponseEntity.ok().body(responseMap);
         } else {
-            return ResponseEntity.notFound().build();
+            responseMap.put("success", false);
+            return ResponseEntity.badRequest().body(responseMap);
         }
     }
 
@@ -65,27 +79,6 @@ public class EmployeeRestController {
             return ResponseEntity.badRequest().body(responseMap);
         }
 
-    }
-
-    @PostMapping("/{employee_id}/role/{role_id}")
-    public ResponseEntity<Map<String, Object>> saveEmployeeNewRole(@PathVariable(value = "employee_id") Integer employeeId,
-                                                                   @PathVariable(value = "role_id") Integer roleId) {
-        if(employeeService.isEmployeeExist(employeeId) && roleService.isRoleExists(roleId)) {
-
-            Map<String, Object> responseMap = employeeService.checkEmployeeRoleAndGetErrorsMap(true, employeeId, roleId);
-
-            if(responseMap.isEmpty()) {
-                employeeService.saveNewEmployeeRole(employeeId, roleId);
-                responseMap.put("success", true);
-                return ResponseEntity.ok().body(responseMap);
-            } else {
-                responseMap.put("success", false);
-                return ResponseEntity.badRequest().body(responseMap);
-            }
-
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @PutMapping("/{employee_id}")
@@ -119,27 +112,6 @@ public class EmployeeRestController {
             responseMap.put("success", true);
 
             return ResponseEntity.ok().body(responseMap);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{employee_id}/role/{role_id}")
-    public ResponseEntity<Map<String, Object>> deleteEmployeeRole(@PathVariable(value = "employee_id") Integer employeeId,
-                                                                  @PathVariable(value = "role_id") Integer roleId) {
-        if(employeeService.isEmployeeExist(employeeId) && roleService.isRoleExists(roleId)) {
-
-            Map<String, Object> responseMap = employeeService.checkEmployeeRoleAndGetErrorsMap(false, employeeId, roleId);
-
-            if(responseMap.isEmpty()) {
-                employeeService.deleteEmployeeRole(employeeId, roleId);
-                responseMap.put("success", true);
-                return ResponseEntity.ok().body(responseMap);
-            } else {
-                responseMap.put("success", false);
-                return ResponseEntity.badRequest().body(responseMap);
-            }
-
         } else {
             return ResponseEntity.notFound().build();
         }
