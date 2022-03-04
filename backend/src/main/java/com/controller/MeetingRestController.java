@@ -1,5 +1,7 @@
 package com.controller;
 
+import com.dto.MeetingAndEmployeesIdDto;
+import com.dto.query.MeetingWithInvite;
 import com.model.meeting.Meeting;
 import com.service.employee.EmployeeService;
 import com.service.meeting.MeetingService;
@@ -40,12 +42,22 @@ public class MeetingRestController {
         }
     }
 
+    @GetMapping("/all/{employee_id}")
+    public ResponseEntity<List<MeetingWithInvite>> findAllEmployeeMeetingsWithInvite(@PathVariable(value = "employee_id") Integer employeeId) {
+        if(employeeService.isEmployeeExist(employeeId)) {
+            List<MeetingWithInvite> meetingWithInvites = meetingService.findAllEmployeeMeetingsWithInvite(employeeId);
+            return ResponseEntity.ok().body(meetingWithInvites);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/invite/{employee_id}/{meeting_id}")
     public ResponseEntity<Map<String, Object>> checkInviteAccept(@PathVariable(value = "employee_id") Integer employeeId,
                                                                  @PathVariable(value = "meeting_id") Integer meetingId) {
 
         if(meetingService.isMeetingExists(meetingId) && employeeService.isEmployeeExist(employeeId)) {
-            Boolean check = meetingService.checkExistsInvite(employeeId, meetingId);
+            Integer check = meetingService.checkInviteAccept(employeeId, meetingId);
             Map<String, Object> responseMap = new HashMap<>();
             if(check != null) {
                 responseMap.put("success", true);
@@ -73,12 +85,23 @@ public class MeetingRestController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String, Object>> saveMeeting(@RequestBody Meeting newMeeting) {
+    public ResponseEntity<Map<String, Object>> saveMeeting(@RequestBody MeetingAndEmployeesIdDto meetingAndEmployeesIdDto) {
 
-        Map<String, Object> responseMap = meetingService.checkMeetingAndGetErrorsMap(newMeeting);
+        if(meetingAndEmployeesIdDto.getEmployeesId() != null) {
+            for (Integer employeeId : meetingAndEmployeesIdDto.getEmployeesId()) {
+                if (!employeeService.isEmployeeExist(employeeId)) {
+                    return ResponseEntity.notFound().build();
+                }
+            }
+        }
+
+        Map<String, Object> responseMap = meetingService.checkMeetingAndGetErrorsMap(meetingAndEmployeesIdDto.getMeeting(), meetingAndEmployeesIdDto.getEmployeesId());
 
         if(responseMap.isEmpty()) {
-            meetingService.saveMeeting(newMeeting);
+            Meeting meeting = meetingService.saveMeeting(meetingAndEmployeesIdDto.getMeeting());
+            if(meetingAndEmployeesIdDto.getEmployeesId() != null) {
+                meetingService.saveInvites(meetingAndEmployeesIdDto.getEmployeesId(), meeting.getId());
+            }
 
             responseMap.put("success", true);
             return ResponseEntity.ok().body(responseMap);
@@ -93,16 +116,14 @@ public class MeetingRestController {
                                                           @PathVariable(value = "meeting_id") Integer meetingId) {
 
         if(meetingService.isMeetingExists(meetingId) && employeeService.isEmployeeExist(employeeId)) {
-            Boolean check = meetingService.checkExistsInvite(employeeId, meetingId);
-            Map<String, Object> responseMap = new HashMap<>();
+            Map<String, Object> responseMap = meetingService.checkInviteAndGetErrorsMap(employeeId, meetingId);
 
-            if(check == null) {
+            if(responseMap.isEmpty()) {
                 meetingService.saveInvite(employeeId, meetingId);
                 responseMap.put("success", true);
                 return ResponseEntity.ok().body(responseMap);
             } else {
                 responseMap.put("success", false);
-                responseMap.put("invite error", "invite already exists for employeeId = " + employeeId + " and meetingId = " + meetingId);
                 return ResponseEntity.badRequest().body(responseMap);
             }
 
@@ -117,7 +138,7 @@ public class MeetingRestController {
 
         if(meetingService.isMeetingExists(meetingId)) {
 
-            Map<String, Object> responseMap = meetingService.checkMeetingAndGetErrorsMap(newMeeting);
+            Map<String, Object> responseMap = meetingService.checkMeetingAndGetErrorsMap(newMeeting, null);
 
             if(responseMap.isEmpty()) {
                 meetingService.updateMeeting(meetingId, newMeeting);
@@ -135,23 +156,34 @@ public class MeetingRestController {
     }
 
     @PutMapping("/invite/{employee_id}/{meeting_id}")
-    public ResponseEntity<Map<String, Object>> acceptInvite(@PathVariable(value = "employee_id") Integer employeeId,
-                                                            @PathVariable(value = "meeting_id") Integer meetingId) {
+    public ResponseEntity<Map<String, Object>> activateInvite(@PathVariable(value = "employee_id") Integer employeeId,
+                                                              @PathVariable(value = "meeting_id") Integer meetingId,
+                                                              @RequestBody Boolean accept) {
         if(meetingService.isMeetingExists(meetingId) && employeeService.isEmployeeExist(employeeId)) {
-            Boolean check = meetingService.checkExistsInvite(employeeId, meetingId);
+            Integer check = meetingService.checkInviteAccept(employeeId, meetingId);
+
 
             Map<String, Object> responseMap = new HashMap<>();
-            if(check != null) {
-                meetingService.acceptInvite(employeeId, meetingId);
-
-                responseMap.put("success", true);
-                return ResponseEntity.ok().body(responseMap);
-            } else {
+            if(check == null) {
                 responseMap.put("success", false);
                 responseMap.put("invite error", "invite does`t exists for employeeId = " + employeeId + " and meetingId = " + meetingId);
 
                 return ResponseEntity.badRequest().body(responseMap);
+            } else {
+
+                String error = meetingService.activateInviteAndGetError(employeeId, meetingId, accept);
+
+                if(error != null) {
+                    responseMap.put("success", false);
+                    responseMap.put("employee error", error);
+
+                    return ResponseEntity.badRequest().body(responseMap);
+                }
+
+                responseMap.put("success", true);
+                return ResponseEntity.ok().body(responseMap);
             }
+
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -177,7 +209,7 @@ public class MeetingRestController {
                                                             @PathVariable(value = "meeting_id") Integer meetingId) {
 
         if(meetingService.isMeetingExists(meetingId) && employeeService.isEmployeeExist(employeeId)) {
-            Boolean check = meetingService.checkExistsInvite(employeeId, meetingId);
+            Integer check = meetingService.checkInviteAccept(employeeId, meetingId);
 
             Map<String, Object> responseMap = new HashMap<>();
             if(check != null) {

@@ -1,0 +1,35 @@
+<p>home works!</p>
+<form>
+  <p>Username: {{authService.loginResponse.username}}</p>
+  <p>Is admin: {{authService.loginResponse.admin}}</p>
+  <p>Token: {{authService.loginResponse.token}}</p>
+
+  <table class="table table-bordered">
+    <tr>
+      <td>Id</td>
+      <td>Meeting name</td>
+      <td>Room Id</td>
+      <td>Office Id</td>
+      <td>Start time</td>
+      <td>End time</td>
+      <td>Accept button</td>
+      <td>Decline button</td>
+    </tr>
+    <tr *ngFor="let meeting of meetings; let i = index" [ngClass]="{'meeting-no-choose' : meeting.accept == 0,
+                                                                    'meeting-accepted' : meeting.accept == 1,
+                                                                    'meeting-declined' : meeting.accept == 2}">
+      <td>{{meeting.id}}</td>
+      <td>{{meeting.name}}</td>
+      <td>{{meeting.roomId}}</td>
+      <td>{{meeting.officeId}}</td>
+      <td>{{meeting.start}}</td>
+      <td>{{meeting.end}}</td>
+      <td>
+        <button class="btn btn-info" (click)="acceptMeeting(i)">Accept</button>
+      </td>
+      <td>
+        <button class="btn btn-info" (click)="declineMeeting(i)">Decline</button>
+      </td>
+    </tr>
+  </table>
+</form>

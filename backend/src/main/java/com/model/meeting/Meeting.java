@@ -1,5 +1,6 @@
 package com.model.meeting;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -32,18 +33,20 @@ public class Meeting {
     @Column(name = "meeting_end")
     private Timestamp end;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Invite> invites;
 
-    public Boolean checkInviteAccept(Integer employeeId) {
+    public Integer checkInviteAccept(Integer employeeId) {
         for (Invite invite : invites) {
             if (invite.getEmployeeId() == employeeId) {
-                return invite.isInviteAccept();
+                return invite.getInviteAccept();
             }
         }
         return null;
     }
 
+    @JsonIgnore
     public List<Integer> getEmployeesId() {
         List<Integer> employeesId = new ArrayList<>();
         for (Invite invite : invites) {
@@ -53,13 +56,13 @@ public class Meeting {
     }
 
     public void saveInvite(Integer employeeId) {
-        invites.add(new Invite(employeeId, id, false));
+        invites.add(new Invite(employeeId, id, 0));
     }
 
-    public Boolean acceptInvite(Integer employeeId) {
+    public Boolean activateInvite(Integer employeeId, Boolean accept) {
         for (Invite invite : invites) {
             if (invite.getEmployeeId() == employeeId) {
-                invite.setInviteAccept(true);
+                invite.setInviteAccept(accept ? 1 : 2);
                 return true;
             }
         }
@@ -73,5 +76,17 @@ public class Meeting {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Meeting{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", roomId=" + roomId +
+                ", officeId=" + officeId +
+                ", start=" + start +
+                ", end=" + end +
+                '}';
     }
 }

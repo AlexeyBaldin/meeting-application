@@ -6,7 +6,7 @@ import com.model.office.Room;
 import com.repository.office.ItemRepository;
 import com.repository.office.OfficeRepository;
 import com.repository.office.RoomRepository;
-import com.service.CheckService;
+import com.util.FieldChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +27,6 @@ public class OfficeService {
     @Autowired
     ItemRepository itemRepository;
 
-    @Autowired
-    CheckService checkService;
 
     public List<Office> findAllOffices() {
         return officeRepository.findAll();
@@ -43,27 +41,27 @@ public class OfficeService {
     }
 
     private String checkCityAndGetError(String city) {
-        return checkService.checkNullStringAndGetError(city);
+        return FieldChecker.checkNullStringAndGetError(city);
     }
 
     private String checkAddressAndGetError(String address) {
-        return checkService.checkNullStringAndGetError(address);
+        return FieldChecker.checkNullStringAndGetError(address);
     }
 
     private String checkPhoneAndGetError(String phone) {
-        return checkService.checkNullStringAndGetError(phone);
+        return FieldChecker.checkNullStringAndGetError(phone);
     }
 
     private String checkOpenTimeAndGetError(LocalTime open) {
-        return checkService.checkNullLocalTimeAndGetError(open);
+        return FieldChecker.checkNullLocalTimeAndGetError(open);
     }
 
     private String checkCloseTimeAndGetError(LocalTime close) {
-        return checkService.checkNullLocalTimeAndGetError(close);
+        return FieldChecker.checkNullLocalTimeAndGetError(close);
     }
 
     private String checkRoomCabinetAndGetError(Integer officeId, Integer cabinet) {
-        String error = checkService.checkPositiveIntegerAndGetError(cabinet);
+        String error = FieldChecker.checkPositiveIntegerAndGetError(cabinet);
 
         if(error == null && roomRepository.existsByOfficeIdAndCabinet(officeId, cabinet)) {
             error = "room with cabinet = " + cabinet + " in office with office id = " + officeId + " already exist";
@@ -72,7 +70,7 @@ public class OfficeService {
     }
 
     private String checkRoomCapacityAndGetError(Integer capacity) {
-        return checkService.checkPositiveIntegerAndGetError(capacity);
+        return FieldChecker.checkPositiveIntegerAndGetError(capacity);
     }
 
     public Map<String, Object> checkOfficeAndGetErrorsMap(Office newOffice) {
@@ -239,7 +237,7 @@ public class OfficeService {
     }
 
     private String checkNewItemCountAndGetError(Integer newItemCount) {
-        return checkService.checkPositiveIntegerAndGetError(newItemCount);
+        return FieldChecker.checkPositiveIntegerAndGetError(newItemCount);
     }
 
     public Map<String, Object> checkItemCountAndGetErrorsMap(Integer itemCount) {
@@ -255,7 +253,7 @@ public class OfficeService {
     }
 
     private String checkItemNameAndGetError(Integer officeId , String newItemName) {
-        String error = checkService.checkNullStringAndGetError(newItemName);
+        String error = FieldChecker.checkNullStringAndGetError(newItemName);
 
         if(error == null && itemRepository.existsByOfficeIdAndName(officeId, newItemName)) {
             error = "item with name = " + newItemName + " in office with office id = " + officeId + " already exist";

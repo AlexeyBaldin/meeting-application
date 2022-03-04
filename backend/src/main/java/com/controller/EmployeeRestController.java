@@ -3,6 +3,7 @@ package com.controller;
 import com.model.employee.Employee;
 import com.model.employee.Role;
 import com.model.employee.User;
+import com.model.employee.UserFactory;
 import com.service.employee.EmployeeService;
 import com.service.employee.RoleService;
 import com.service.employee.UserService;
@@ -53,9 +54,7 @@ public class EmployeeRestController {
 
         if(responseMap.isEmpty()) {
             Employee employee = employeeService.saveEmployee(newEmployee);
-            User newUser = new User(newEmployee.getName().replaceAll(" ", ""), newEmployee.getName().replaceAll(" ", ""));
-            newUser.setId(employee.getId());
-            userService.register(newUser);
+            userService.register(UserFactory.createUser(employee));
 
             responseMap.put("success", true);
             return ResponseEntity.ok().body(responseMap);
@@ -65,7 +64,7 @@ public class EmployeeRestController {
         }
     }
 
-    @PostMapping("/save")
+    /*@PostMapping("/save")
     public ResponseEntity<Map<String, Object>> saveEmployee(@RequestBody Employee newEmployee) {
 
         Map<String, Object> responseMap = employeeService.checkEmployeeAndGetErrorsMap(newEmployee);
@@ -79,7 +78,7 @@ public class EmployeeRestController {
             return ResponseEntity.badRequest().body(responseMap);
         }
 
-    }
+    }*/
 
     @PutMapping("/{employee_id}")
     public ResponseEntity<Map<String, Object>> updateEmployee(@PathVariable(value = "employee_id") Integer employeeId,

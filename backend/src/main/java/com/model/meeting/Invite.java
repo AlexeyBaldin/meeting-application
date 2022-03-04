@@ -21,7 +21,7 @@ public class Invite {
     private int meetingId;
 
     @Column(name = "invite_accept")
-    private boolean inviteAccept;
+    private Integer inviteAccept;
 
     @JsonIgnore
     @ManyToOne
@@ -37,7 +37,7 @@ public class Invite {
 
     public Invite() {}
 
-    public Invite(int employeeId, int meetingId, boolean inviteAccept) {
+    public Invite(int employeeId, int meetingId, Integer inviteAccept) {
         this.employeeId = employeeId;
         this.meetingId = meetingId;
         this.inviteAccept = inviteAccept;

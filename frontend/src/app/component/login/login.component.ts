@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {AuthService} from "../service/auth.service";
+import {AuthService} from "../../service/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -17,6 +17,11 @@ export class LoginComponent implements OnInit {
               private authService: AuthService) { }
 
   ngOnInit(): void {
+    console.log("init login");
+    //========================
+    this.authService.login('admin', 'admin').subscribe(() => this.goToHomePage(this.router));
+    //========================
+
   }
 
   onSubmit() {

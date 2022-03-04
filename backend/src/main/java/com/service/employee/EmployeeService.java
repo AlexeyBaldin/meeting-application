@@ -1,10 +1,9 @@
 package com.service.employee;
 
 import com.model.employee.Employee;
-import com.model.employee.Role;
 import com.repository.employee.EmployeeRepository;
-import com.service.CheckService;
 import com.service.office.OfficeService;
+import com.util.FieldChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +22,6 @@ public class EmployeeService {
 
     @Autowired
     OfficeService officeService;
-
-    @Autowired
-    CheckService checkService;
 
     public Boolean isEmployeeExist(Integer employeeId) {
         return employeeRepository.existsById(employeeId);
@@ -59,15 +55,15 @@ public class EmployeeService {
     }
 
     private String checkEmployeeNameAndGetError(String employeeName) {
-        return checkService.checkNullStringAndGetError(employeeName);
+        return FieldChecker.checkNullStringAndGetError(employeeName);
     }
 
     private String checkEmployeeEmailAndGetError(String employeeEmail) {
-        return checkService.checkNullStringAndGetError(employeeEmail);
+        return FieldChecker.checkNullStringAndGetError(employeeEmail);
     }
 
     private String checkEmployeePositionAndGetError(String employeePosition) {
-        return checkService.checkNullStringAndGetError(employeePosition);
+        return FieldChecker.checkNullStringAndGetError(employeePosition);
     }
 
     public Map<String, Object> checkEmployeeAndGetErrorsMap(Employee newEmployee) {

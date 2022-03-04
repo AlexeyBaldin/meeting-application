@@ -1,0 +1,16 @@
+
+.table {
+  text-align: center;
+}
+
+.meeting-accepted {
+  background: rgba(171, 255, 167, 0.36);
+}
+
+.meeting-declined {
+  background: rgba(255, 172, 170, 0.36);
+}
+
+.meeting-no-choose {
+  background: rgba(255, 253, 156, 0.36);
+}

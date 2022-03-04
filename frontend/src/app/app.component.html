@@ -8,6 +8,12 @@
             <li class="list-inline-item">
               <a routerLink="/" class="btn btn-info">Home</a>
             </li>
+            <li class="list-inline-item">
+              <a routerLink="/profile" class="btn btn-info">Profile</a>
+            </li>
+            <li class="list-inline-item logout">
+              <a (click)="logout()" routerLink="/login" class="btn btn-info">Logout</a>
+            </li>
           </ul>
         </div>
       </div>

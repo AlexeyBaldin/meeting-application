@@ -4,7 +4,7 @@ import com.model.employee.Role;
 import com.model.employee.User;
 import com.repository.employee.EmployeeRepository;
 import com.repository.employee.UserRepository;
-import com.service.CheckService;
+import com.util.FieldChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,9 +25,6 @@ public class UserService {
 
     @Autowired
     RoleService roleService;
-
-    @Autowired
-    CheckService checkService;
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -65,11 +62,16 @@ public class UserService {
     public void updateUser(Integer userId, User newUser) {
         User user = findUserById(userId);
 
-        newUser.setId(userId);
-        newUser.setRoles(newUser.getRoles());
-        newUser.setActivation(user.isActivation());
+        System.out.println(newUser.getUsername());
 
-        userRepository.save(newUser);
+        if(newUser.getUsername() != null) {
+            user.setUsername(newUser.getUsername());
+        }
+        if(newUser.getPassword() != null) {
+            user.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+        }
+
+        userRepository.save(user);
     }
 
     public void deleteUser(Integer userId) {
@@ -89,19 +91,36 @@ public class UserService {
             errors.put("field(userId) error", "employee does`t exist for id = " + newUser.getId());
         }
 
-        String check = checkUserUsernameAndGetError(newUser.getUsername());
+        String check = checkUserUsernameAndGetError(newUser);
         if(check != null) {
             errors.put("field(username) error", check);
+        }
+
+        check = checkUserPasswordAndGetError(newUser.getPassword());
+        if(check != null) {
+            errors.put("field(password) error", check);
         }
 
         return errors;
     }
 
-    private String checkUserUsernameAndGetError(String username) {
-        String error = checkService.checkNullStringAndGetError(username);
+    private String checkUserUsernameAndGetError(User newUser) {
+        String error = null;
 
-        if(error == null && userRepository.existsByUsername(username)) {
-            error = "user with username = " + username + " already exist";
+        User user = userRepository.findByUsername(newUser.getUsername()).orElse(null);
+
+        if(user != null && user.getId() != newUser.getId()) {
+            error = "user with username = " + newUser.getUsername() + " already exist";
+        }
+
+        return error;
+    }
+
+    private String checkUserPasswordAndGetError(String password) {
+        String error = null;
+
+        if(password.length() < 5) {
+            error = "password should be 5 or more symbols";
         }
 
         return error;

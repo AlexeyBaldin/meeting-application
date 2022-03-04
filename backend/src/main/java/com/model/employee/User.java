@@ -1,5 +1,6 @@
 package com.model.employee;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,11 +32,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
+    @JsonIgnore
     public Boolean isAdmin() {
         for (Role role : roles) {
             if("ROLE_ADMIN".equals(role.getName())) {

@@ -37,7 +37,7 @@ public class UserRestController {
         }
     }
 
-    @PostMapping("/save")
+    /*@PostMapping("/save")
     public ResponseEntity<Map<String, Object>> saveUser(@RequestBody User newUser) {
 
         Map<String, Object> responseMap = userService.checkUserAndGetErrorsMap(newUser);
@@ -50,7 +50,7 @@ public class UserRestController {
             responseMap.put("success", false);
             return ResponseEntity.badRequest().body(responseMap);
         }
-    }
+    }*/
 
     @PutMapping("/{user_id}")
     public ResponseEntity<Map<String, Object>> updateUser(@PathVariable(value = "user_id") Integer userId, @RequestBody User newUser) {

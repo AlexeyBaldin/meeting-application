@@ -220,7 +220,7 @@
             <column name="meeting_id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_invite"/>
             </column>
-            <column name="invite_accept" type="BOOLEAN" defaultValue="false">
+            <column name="invite_accept" type="INTEGER" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
         </createTable>
