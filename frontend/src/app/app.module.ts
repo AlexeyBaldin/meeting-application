@@ -10,13 +10,15 @@ import {FormsModule} from "@angular/forms";
 import {Interceptor} from "./security/interceptor";
 import {AuthGuard} from "./security/auth-guard";
 import { ProfileComponent } from './component/profile/profile.component';
+import { RegistrationComponent } from './component/registration/registration.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    ProfileComponent
+    ProfileComponent,
+    RegistrationComponent
   ],
   imports: [
     BrowserModule,

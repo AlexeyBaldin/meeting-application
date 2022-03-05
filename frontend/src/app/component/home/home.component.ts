@@ -10,7 +10,7 @@ import {ResponseMap} from "../../model/response-map";
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
 
@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("init home");
-    
+
     this.meetingService.getEmployeeMeetings(Number(localStorage.getItem('id'))).subscribe(meetings => {
       for(let i = 0; i < meetings.length; i++) {
         meetings[i].start = meetings[i].start.slice(0, 16);
