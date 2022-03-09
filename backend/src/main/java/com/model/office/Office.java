@@ -25,9 +25,9 @@ public class Office {
     private String phone;
 
     @Column(name = "office_open")
-    private LocalTime open;
+    private LocalTime openTime;
 
     @Column(name = "office_close")
-    private LocalTime close;
+    private LocalTime closeTime;
 
 }

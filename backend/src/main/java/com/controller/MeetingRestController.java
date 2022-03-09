@@ -2,6 +2,7 @@ package com.controller;
 
 import com.dto.MeetingAndEmployeesIdDto;
 import com.dto.query.MeetingWithInvite;
+import com.model.employee.Employee;
 import com.model.meeting.Meeting;
 import com.service.employee.EmployeeService;
 import com.service.meeting.MeetingService;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/rest/meeting")
+@RequestMapping("/admin/rest/meeting")
 public class MeetingRestController {
 
     @Autowired
@@ -27,10 +28,7 @@ public class MeetingRestController {
     @Autowired
     OfficeService officeService;
 
-    @GetMapping("/all")
-    public List<Meeting> findAll() {
-        return meetingService.findAllMeetings();
-    }
+
 
     @GetMapping("/{meeting_id}")
     public ResponseEntity<Meeting> findMeetingById(@PathVariable(value = "meeting_id") Integer meetingId) {
@@ -42,15 +40,7 @@ public class MeetingRestController {
         }
     }
 
-    @GetMapping("/all/{employee_id}")
-    public ResponseEntity<List<MeetingWithInvite>> findAllEmployeeMeetingsWithInvite(@PathVariable(value = "employee_id") Integer employeeId) {
-        if(employeeService.isEmployeeExist(employeeId)) {
-            List<MeetingWithInvite> meetingWithInvites = meetingService.findAllEmployeeMeetingsWithInvite(employeeId);
-            return ResponseEntity.ok().body(meetingWithInvites);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 
     @GetMapping("/invite/{employee_id}/{meeting_id}")
     public ResponseEntity<Map<String, Object>> checkInviteAccept(@PathVariable(value = "employee_id") Integer employeeId,
@@ -74,7 +64,7 @@ public class MeetingRestController {
         }
     }
 
-    @GetMapping("/{meeting_id}/employees")
+    @GetMapping("/{meeting_id}/employees/id")
     public ResponseEntity<List<Integer>> findAllEmployeesIdByMeetingId(@PathVariable(value = "meeting_id") Integer meetingId) {
         if(meetingService.isMeetingExists(meetingId)) {
             List<Integer> employeesId = meetingService.findAllEmployeesIdByMeetingId(meetingId);
@@ -84,32 +74,7 @@ public class MeetingRestController {
         }
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<Map<String, Object>> saveMeeting(@RequestBody MeetingAndEmployeesIdDto meetingAndEmployeesIdDto) {
 
-        if(meetingAndEmployeesIdDto.getEmployeesId() != null) {
-            for (Integer employeeId : meetingAndEmployeesIdDto.getEmployeesId()) {
-                if (!employeeService.isEmployeeExist(employeeId)) {
-                    return ResponseEntity.notFound().build();
-                }
-            }
-        }
-
-        Map<String, Object> responseMap = meetingService.checkMeetingAndGetErrorsMap(meetingAndEmployeesIdDto.getMeeting(), meetingAndEmployeesIdDto.getEmployeesId());
-
-        if(responseMap.isEmpty()) {
-            Meeting meeting = meetingService.saveMeeting(meetingAndEmployeesIdDto.getMeeting());
-            if(meetingAndEmployeesIdDto.getEmployeesId() != null) {
-                meetingService.saveInvites(meetingAndEmployeesIdDto.getEmployeesId(), meeting.getId());
-            }
-
-            responseMap.put("success", true);
-            return ResponseEntity.ok().body(responseMap);
-        } else {
-            responseMap.put("success", false);
-            return ResponseEntity.badRequest().body(responseMap);
-        }
-    }
 
     @PostMapping("/invite/{employee_id}/{meeting_id}")
     public ResponseEntity<Map<String, Object>> saveInvite(@PathVariable(value = "employee_id") Integer employeeId,
@@ -155,39 +120,7 @@ public class MeetingRestController {
         }
     }
 
-    @PutMapping("/invite/{employee_id}/{meeting_id}")
-    public ResponseEntity<Map<String, Object>> activateInvite(@PathVariable(value = "employee_id") Integer employeeId,
-                                                              @PathVariable(value = "meeting_id") Integer meetingId,
-                                                              @RequestBody Boolean accept) {
-        if(meetingService.isMeetingExists(meetingId) && employeeService.isEmployeeExist(employeeId)) {
-            Integer check = meetingService.checkInviteAccept(employeeId, meetingId);
 
-
-            Map<String, Object> responseMap = new HashMap<>();
-            if(check == null) {
-                responseMap.put("success", false);
-                responseMap.put("invite error", "invite does`t exists for employeeId = " + employeeId + " and meetingId = " + meetingId);
-
-                return ResponseEntity.badRequest().body(responseMap);
-            } else {
-
-                String error = meetingService.activateInviteAndGetError(employeeId, meetingId, accept);
-
-                if(error != null) {
-                    responseMap.put("success", false);
-                    responseMap.put("employee error", error);
-
-                    return ResponseEntity.badRequest().body(responseMap);
-                }
-
-                responseMap.put("success", true);
-                return ResponseEntity.ok().body(responseMap);
-            }
-
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @DeleteMapping("/{meeting_id}")
     public ResponseEntity<Map<String, Object>> deleteMeeting(@PathVariable(value = "meeting_id") Integer meetingId) {

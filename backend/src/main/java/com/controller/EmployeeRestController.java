@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/rest/employee")
+@RequestMapping("/admin/rest/employee")
 public class EmployeeRestController {
 
     @Autowired
@@ -32,20 +32,6 @@ public class EmployeeRestController {
     @Autowired
     OfficeService officeService;
 
-    @GetMapping("/all")
-    public List<Employee> findAll() {
-        return employeeService.findAllEmployees();
-    }
-
-    @GetMapping("/{employee_id}")
-    public ResponseEntity<Employee> findEmployeeById(@PathVariable(value = "employee_id") Integer employeeId) {
-        if(employeeService.isEmployeeExist(employeeId)) {
-            Employee employee = employeeService.findEmployeeById(employeeId);
-            return ResponseEntity.ok().body(employee);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerEmployee(@RequestBody Employee newEmployee) {
@@ -54,9 +40,10 @@ public class EmployeeRestController {
 
         if(responseMap.isEmpty()) {
             Employee employee = employeeService.saveEmployee(newEmployee);
-            userService.register(UserFactory.createUser(employee));
+            User user = userService.register(UserFactory.createUser(employee));
 
             responseMap.put("success", true);
+            responseMap.put("login", user.getUsername());
             return ResponseEntity.ok().body(responseMap);
         } else {
             responseMap.put("success", false);

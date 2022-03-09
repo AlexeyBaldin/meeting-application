@@ -1,35 +1,91 @@
-<p>home works!</p>
 <form>
-  <p>Username: {{authService.loginResponse.username}}</p>
-  <p>Is admin: {{authService.loginResponse.admin}}</p>
-  <p>Token: {{authService.loginResponse.token}}</p>
 
   <table class="table table-bordered">
     <tr>
-      <td>Id</td>
+      <td>Meeting id</td>
       <td>Meeting name</td>
-      <td>Room Id</td>
-      <td>Office Id</td>
       <td>Start time</td>
       <td>End time</td>
+      <td>Information button</td>
       <td>Accept button</td>
       <td>Decline button</td>
     </tr>
-    <tr *ngFor="let meeting of meetings; let i = index" [ngClass]="{'meeting-no-choose' : meeting.accept == 0,
-                                                                    'meeting-accepted' : meeting.accept == 1,
-                                                                    'meeting-declined' : meeting.accept == 2}">
+    <tr *ngFor="let meeting of meetings; let i = index" [ngClass]="{'no-choose' : meeting.accept == 0,
+                                                                    'choose-accepted' : meeting.accept == 1,
+                                                                    'choose-declined' : meeting.accept == 2}">
       <td>{{meeting.id}}</td>
       <td>{{meeting.name}}</td>
-      <td>{{meeting.roomId}}</td>
-      <td>{{meeting.officeId}}</td>
-      <td>{{meeting.start}}</td>
-      <td>{{meeting.end}}</td>
+      <td>{{meeting.start | date: 'MMM d, y H:mm:ss' : 'UTC'}}</td>
+      <td>{{meeting.end | date: 'MMM d, y H:mm:ss' : 'UTC'}}</td>
       <td>
-        <button class="btn btn-info" (click)="acceptMeeting(i)">Accept</button>
+        <button class="btn btn-info" (click)="meetingInfo(i)">Information</button>
       </td>
       <td>
-        <button class="btn btn-info" (click)="declineMeeting(i)">Decline</button>
+        <button class="btn btn-info" [disabled]="meetings[i].accept == 1" (click)="acceptMeeting(i)">Accept</button>
+      </td>
+      <td>
+        <button class="btn btn-info" [disabled]="meetings[i].accept == 2" (click)="declineMeeting(i)">Decline</button>
       </td>
     </tr>
   </table>
+
+  <hr><hr>
+
+  <div *ngIf="showInfo">
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Meeting id:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.meetingId}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Office id:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.officeId}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Office address:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.officeAddress}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Room id:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.roomId}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Room cabinet:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.cabinet}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Room items:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.roomItems}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Meeting theme:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.meetingName}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Start time:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.startTime}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">End time:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.endTime}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Status:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.status}}</div>
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Invited:</p>
+      <div class="input-group col-sm-8 col-form-label">{{infoMeeting.invited}}</div>
+    </div>
+    <div class="form-group row">
+      <button class="btn btn-info col-sm-12" (click)="closeInfo()">Close</button>
+    </div>
+
+  </div>
+
+  <hr><hr>
+
+  <p *ngFor="let alert of alerts">
+    <ngb-alert [type]="alert.type" (closed)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+  </p>
+
 </form>

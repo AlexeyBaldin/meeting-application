@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/rest/user")
+@RequestMapping("/admin/rest/user")
 public class UserRestController {
 
     @Autowired
@@ -52,26 +52,7 @@ public class UserRestController {
         }
     }*/
 
-    @PutMapping("/{user_id}")
-    public ResponseEntity<Map<String, Object>> updateUser(@PathVariable(value = "user_id") Integer userId, @RequestBody User newUser) {
 
-        if(userService.isUserExists(userId)) {
-
-            newUser.setId(userId);
-            Map<String, Object> responseMap = userService.checkUserAndGetErrorsMap(newUser);
-
-            if(responseMap.isEmpty()) {
-                userService.updateUser(userId, newUser);
-                responseMap.put("success", true);
-                return ResponseEntity.ok().body(responseMap);
-            } else {
-                responseMap.put("success", false);
-                return ResponseEntity.badRequest().body(responseMap);
-            }
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @PutMapping("/{user_id}/activation")
     public ResponseEntity<Map<String, Object>> activateUser(@PathVariable(value = "user_id") Integer userId) {

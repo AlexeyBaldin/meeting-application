@@ -1,59 +1,28 @@
 package com.controller;
 
+import com.dto.query.ItemInRoom;
 import com.model.office.Item;
 import com.model.office.Office;
 import com.model.office.Room;
+import com.model.office.RoomInventory;
 import com.service.office.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/rest/office")
+@RequestMapping("/admin/rest/office")
 public class OfficeRestController {
 
     @Autowired
     private OfficeService officeService;
 
-    @GetMapping("/all")
-    public List<Office> findAll() {
-        return officeService.findAllOffices();
-    }
 
-    @GetMapping("/{office_id}")
-    public ResponseEntity<Office> findById(@PathVariable(value = "office_id") Integer officeId) {
-        if(officeService.isOfficeExists(officeId)) {
-            Office office = officeService.findOfficeById(officeId);
-            return ResponseEntity.ok().body(office);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/{office_id}/room")
-    public ResponseEntity<List<Room>> findAllRoomsInOffice(@PathVariable(value = "office_id") Integer officeId) {
-        if(officeService.isOfficeExists(officeId)) {
-            List<Room> rooms = officeService.findAllRoomsInOffice(officeId);
-            return ResponseEntity.ok().body(rooms);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/{office_id}/room/{room_id}")
-    public ResponseEntity<Room> findByOfficeIdAndRoomId(@PathVariable(value = "office_id") Integer officeId,
-                                                        @PathVariable(value = "room_id") Integer roomId) {
-        if(officeService.isOfficeExists(officeId) && officeService.isRoomExists(roomId)) {
-            Room room = officeService.findRoomByOfficeIdAndRoomId(officeId, roomId);
-            return ResponseEntity.ok().body(room);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @GetMapping("/{office_id}/room/{room_id}/{item_name}")
     public ResponseEntity<Integer> countItemInRoom(@PathVariable(value = "office_id") Integer officeId,
@@ -130,6 +99,17 @@ public class OfficeRestController {
         }
     }
 
+
+
+    @GetMapping("{office_id}/item/all")
+    public ResponseEntity<List<Item>> findAllItemsInOffice(@PathVariable(value = "office_id") Integer officeId) {
+        if(officeService.isOfficeExists(officeId)) {
+            return ResponseEntity.ok().body(officeService.findAllItemsInOffice(officeId));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/{office_id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable(value = "office_id") Integer officeId,
                                                       @RequestBody Office newOffice) {
@@ -151,15 +131,14 @@ public class OfficeRestController {
         }
     }
 
-    @PutMapping("/{office_id}/room/{room_id}")
-    public ResponseEntity<Map<String, Object>> updateRoom(@PathVariable(value = "office_id") Integer officeId,
-                                                          @PathVariable(value = "room_id") Integer roomId, @RequestBody Room newRoom) {
+    @PutMapping("/room/{room_id}")
+    public ResponseEntity<Map<String, Object>> updateRoom(@PathVariable(value = "room_id") Integer roomId, @RequestBody Room newRoom) {
 
-        if(officeService.isOfficeExists(officeId) && officeService.isRoomExists(roomId)) {
-            Map<String, Object> responseMap = officeService.checkRoomAndGetErrorsMap(officeId, newRoom);
+        if(officeService.isRoomExists(roomId)) {
+            Map<String, Object> responseMap = officeService.checkRoomAndGetErrorsMap(newRoom.getOfficeId(), newRoom);
 
             if(responseMap.isEmpty()) {
-                officeService.updateRoom(officeId, roomId, newRoom);
+                officeService.updateRoom(newRoom.getOfficeId(), roomId, newRoom);
                 responseMap.put("success", true);
                 return ResponseEntity.ok().body(responseMap);
             } else {
@@ -185,14 +164,13 @@ public class OfficeRestController {
         }
     }
 
-    @DeleteMapping("/{office_id}/room/{room_id}")
-    public ResponseEntity<Map<String, Object>> deleteRoom(@PathVariable(value = "office_id") Integer officeId,
-                                                          @PathVariable(value = "room_id") Integer roomId) {
+    @DeleteMapping("/room/{room_id}")
+    public ResponseEntity<Map<String, Object>> deleteRoom(@PathVariable(value = "room_id") Integer roomId) {
 
         Map<String, Object> responseMap = new HashMap<>();
 
-        if(officeService.isOfficeExists(officeId) && officeService.isRoomExists(roomId)) {
-            officeService.deleteRoom(officeId, roomId);
+        if(officeService.isRoomExists(roomId)) {
+            officeService.deleteRoom(roomId);
             responseMap.put("success", true);
             return ResponseEntity.ok().body(responseMap);
         } else {
@@ -211,8 +189,9 @@ public class OfficeRestController {
             Map<String, Object> responseMap = officeService.checkItemInTheRoomAndGetErrorsMap(officeId, roomId, itemName);
 
             if(responseMap.isEmpty()) {
-                officeService.fullRemoveItemFromRoom(officeId, roomId, itemName);
+                int count = officeService.fullRemoveItemFromRoom(roomId, itemName);
                 responseMap.put("success", true);
+                responseMap.put("count", count);
                 return ResponseEntity.ok().body(responseMap);
             } else {
                 return ResponseEntity.badRequest().body(responseMap);
@@ -241,7 +220,7 @@ public class OfficeRestController {
     public ResponseEntity<Map<String, Object>> saveItem(@PathVariable(value = "office_id") Integer officeId, @RequestBody Item newItem) {
 
         if(officeService.isOfficeExists(officeId)) {
-            Map<String, Object> responseMap = officeService.checkItemAndGetErrorsMap(officeId, newItem);
+            Map<String, Object> responseMap = officeService.checkItemAndGetErrorsMap(officeId, newItem, false);
 
             if(responseMap.isEmpty()) {
                 officeService.saveItem(officeId, newItem);
@@ -258,7 +237,7 @@ public class OfficeRestController {
 
     }
 
-    @PutMapping("/item/{item_id}")
+    @PutMapping("/item/{item_id}/count")
     public ResponseEntity<Map<String, Object>> updateItemCount(@PathVariable(value = "item_id") Integer itemId, @RequestBody Integer newCount) {
 
         if(officeService.isItemExists(itemId)) {
@@ -266,6 +245,26 @@ public class OfficeRestController {
 
             if(responseMap.isEmpty()) {
                 officeService.updateItemCount(itemId, newCount);
+                responseMap.put("success", true);
+                return ResponseEntity.ok().body(responseMap);
+            } else {
+                responseMap.put("success", false);
+                return ResponseEntity.badRequest().body(responseMap);
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/item/{item_id}")
+    public ResponseEntity<Map<String, Object>> updateItem(@PathVariable(value = "item_id") Integer itemId, @RequestBody Item newItem) {
+
+        if(officeService.isItemExists(itemId)) {
+            Map<String, Object> responseMap = officeService.checkItemAndGetErrorsMap(newItem.getOfficeId(), newItem, true);
+
+            if(responseMap.isEmpty()) {
+                newItem.setId(itemId);
+                officeService.updateItem(newItem);
                 responseMap.put("success", true);
                 return ResponseEntity.ok().body(responseMap);
             } else {

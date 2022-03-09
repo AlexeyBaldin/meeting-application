@@ -50,11 +50,16 @@ public class AuthenticationController {
 
             String token = jwtTokenProvider.createToken(username, user.getRoles());
 
+            if(!user.isActivation()) {
+                userService.activateUser(user.getId());
+            }
+
             Map<String, Object> response = new HashMap<>();
             response.put("username", username);
             response.put("id", user.getId());
             response.put("token", token);
             response.put("admin", user.isAdmin());
+            response.put("expire", jwtTokenProvider.getExpireDate(token));
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {

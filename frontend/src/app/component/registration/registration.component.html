@@ -1,0 +1,100 @@
+<div class="card my-5">
+  <div class="card-body">
+    <form #userForm="ngForm">
+
+      <div class="form-group row">
+        <button class="btn btn-info col-sm-12" (click)="reset()">Reset</button>
+        <button class="btn btn-info col-sm-3" [disabled]="checkEmployeeData() || mail.invalid" (click)="createNewEmployee()">Register new employee</button>
+        <button class="btn btn-info col-sm-3" [disabled]="checkEmployeeData() || mail.invalid" (click)="editEmployee()">Edit employee data</button>
+        <button class="btn btn-info col-sm-3" [disabled]="checkUserData()" (click)="editUser()">Edit user data</button>
+        <button class="btn btn-info col-sm-3" [disabled]="employeeId == 0" (click)="deleteEmployee()">Delete employee</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Employee search:</p>
+        <div class="input-group col-sm-8">
+          <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="foundEmployee" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchEmployee"/>
+        </div>
+        <button class="btn btn-info col-sm-2" (click)="enterEmployee()">Enter</button>
+
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Id:</p>
+        <input type="text" [(ngModel)]="employeeId"
+               class="form-control col-sm-10"
+               id="eid"
+               name="eid"
+               required #eid="ngModel"
+               [disabled]="true">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Office id:</p>
+        <input type="text" [(ngModel)]="officeId"
+               class="form-control col-sm-10"
+               id="oId"
+               name="oId"
+               required #oId="ngModel">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Name:</p>
+        <input type="text" [(ngModel)]="employeeName"
+               class="form-control col-sm-10"
+               id="ename"
+               name="ename"
+               required #ename="ngModel">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Position:</p>
+        <input type="text" [(ngModel)]="position"
+               class="form-control col-sm-10"
+               id="pos"
+               name="pos"
+               required #pos="ngModel">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Email:</p>
+        <input type="email" [(ngModel)]="email"
+               pattern="^([A-Za-z0-9]+[\.-_]?)*[A-Za-z0-9]+@[A-Za-z0-9]+(\.[A-Za-z0-9]+)*\.[A-Za-z0-9]+$"
+               class="form-control col-sm-10"
+               [ngClass]="{'choose-declined' : mail.invalid && mail.touched}"
+               id="mail"
+               name="mail"
+               required #mail="ngModel">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Username:</p>
+        <input type="text" [(ngModel)]="username"
+               class="form-control col-sm-10"
+               id="uname"
+               name="uname"
+               placeholder="Enter new name"
+               required #uname="ngModel">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Password:</p>
+        <input type="text" [(ngModel)]="password"
+               class="form-control col-sm-10"
+               id="pass"
+               name="pass"
+               placeholder="Enter new password"
+               required #pass="ngModel">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Repeat:</p>
+        <input type="text" [(ngModel)]="repeatPassword"
+               class="form-control col-sm-10"
+               id="pass2"
+               name="pass2"
+               placeholder="Repeat new password"
+               required #pass2="ngModel">
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<p *ngFor="let alert of alerts">
+  <ngb-alert [type]="alert.type" (closed)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+</p>

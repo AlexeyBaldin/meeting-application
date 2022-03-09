@@ -1,9 +1,11 @@
 package com.service.meeting;
 
 import com.dto.query.MeetingWithInvite;
+import com.model.employee.Employee;
 import com.model.meeting.Meeting;
 import com.model.office.Office;
 import com.model.office.Room;
+import com.repository.employee.EmployeeRepository;
 import com.repository.meeting.MeetingRepository;
 import com.service.employee.EmployeeService;
 import com.service.office.OfficeService;
@@ -23,6 +25,9 @@ public class MeetingService {
 
     @Autowired
     MeetingRepository meetingRepository;
+
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     @Autowired
     EmployeeService employeeService;
@@ -46,6 +51,7 @@ public class MeetingService {
         if(newMeeting.getInvites() == null) {
             newMeeting.setInvites(new ArrayList<>());
         }
+
         return meetingRepository.save(newMeeting);
     }
 
@@ -69,6 +75,10 @@ public class MeetingService {
         return meeting.getEmployeesId();
     }
 
+    public List<Employee> findAllEmployeesByMeetingId(Integer meetingId) {
+        return employeeRepository.findAllEmployeeByMeetingId(meetingId);
+    }
+
     public List<MeetingWithInvite> findAllEmployeeMeetingsWithInvite(Integer employeeId) {
         return meetingRepository.findAllEmployeeMeetingsWithInvite(employeeId);
     }
@@ -88,7 +98,7 @@ public class MeetingService {
     }
 
     public String checkEmployeeTimeAndGetError(Integer employeeId, Integer meetingId, Timestamp start, Timestamp end) {
-        List<Meeting> meetings = meetingRepository.findAllEmployeeMeetings(employeeId, meetingId);
+        List<Meeting> meetings = meetingRepository.findAllEmployeeAcceptedMeetings(employeeId, meetingId);
 
         return checkIntersectsAndGetError(meetings, start, end, "Employee meeting intersects with meetings with ids: ");
     }
@@ -181,8 +191,8 @@ public class MeetingService {
         LocalTime endTime = end.toLocalDateTime().toLocalTime().minusSeconds(offsetSeconds);
 
 
-        if(!(startTime.isAfter(office.getOpen()) && startTime.isBefore(office.getClose())) ||
-                !(endTime.isAfter(office.getOpen()) && endTime.isBefore(office.getClose()))) {
+        if(!(startTime.isAfter(office.getOpenTime()) && startTime.isBefore(office.getCloseTime())) ||
+                !(endTime.isAfter(office.getOpenTime()) && endTime.isBefore(office.getCloseTime()))) {
             return "the office is closed during this period of time (or part of period)";
         }
 
@@ -225,7 +235,7 @@ public class MeetingService {
     }
 
     private String checkRoomAndGetError(Integer meetingId, Integer roomId, Timestamp start, Timestamp end) {
-        List<Meeting> meetings = meetingRepository.findAllByRoomId(roomId, meetingId);
+        List<Meeting> meetings = meetingRepository.findAllByRoomIdWithInvite(roomId, meetingId);
 
         return checkIntersectsAndGetError(meetings, start, end, "Meeting time intersects with meetings with ids: ");
     }
@@ -235,7 +245,7 @@ public class MeetingService {
         int intersects = 0;
         if(!meetings.isEmpty()) {
             for (Meeting meeting : meetings) {
-                if(!(meeting.getEnd().getTime() < start.getTime() || meeting.getStart().getTime() > end.getTime())) {
+                if(!(meeting.getEnd().getTime() <= start.getTime() || meeting.getStart().getTime() >= end.getTime())) {
                     error.append(meeting.getId()).append(" ");
                     intersects++;
                 }
@@ -251,6 +261,8 @@ public class MeetingService {
 
     public Map<String, Object> checkMeetingAndGetErrorsMap(Meeting newMeeting, List<Integer> employeesId) {
         Map<String, Object> errors = new HashMap<>();
+
+        System.out.println(newMeeting.getStart());
 
         if(!officeService.isOfficeExists(newMeeting.getOfficeId())) {
             errors.put("field(officeId) error", "office with id = " + newMeeting.getOfficeId() + " does`t exist");
@@ -282,5 +294,9 @@ public class MeetingService {
         }
 
         return errors;
+    }
+
+    public List<Meeting> findAllByRoomId(Integer roomId) {
+        return meetingRepository.findAllByRoomId(roomId);
     }
 }

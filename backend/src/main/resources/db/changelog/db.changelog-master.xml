@@ -275,6 +275,11 @@
             <column name="role_id" value="1"/>
         </insert>
 
+        <insert tableName="user_role">
+            <column name="employee_id" value="1"/>
+            <column name="role_id" value="2"/>
+        </insert>
+
 <!--        <insert tableName="items">-->
 <!--            <column name="office_id" value="1"/>-->
 <!--            <column name="item_name" value="Projector"/>-->

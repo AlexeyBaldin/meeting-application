@@ -13,7 +13,6 @@ export class Interceptor implements HttpInterceptor {
     if(this.authService.auth) {
       const token = localStorage.getItem('token');
       if(token) {
-        console.log("intercepting...")
         request = request.clone({
           setHeaders: {
             Authorization: `Bearer_${token}`

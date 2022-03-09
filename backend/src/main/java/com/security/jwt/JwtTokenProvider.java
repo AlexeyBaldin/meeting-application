@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -80,6 +84,12 @@ public class JwtTokenProvider {
             System.out.println("Jwt token is expired or invalid");
             return false;
         }
+    }
+
+    public LocalDateTime getExpireDate(String token) {
+        Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+
+        return new Timestamp(claims.getBody().getExpiration().getTime()).toLocalDateTime();
     }
 
     private List<String> getRoleNames(List<Role> roles) {

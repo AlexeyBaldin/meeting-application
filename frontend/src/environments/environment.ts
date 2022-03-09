@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  mainUrl: 'http://localhost:8080/rest/'
+  loginUrl: 'http://localhost:8080/rest/auth/login',
+  adminUrl: 'http://localhost:8080/admin/rest/',
+  forAllUrl: 'http://localhost:8080/forall/rest/'
 
 };
 

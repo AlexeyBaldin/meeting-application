@@ -1,0 +1,214 @@
+<div class="card my-5">
+  <div class="card-body">
+    <form #userForm="ngForm">
+
+      <div class="form-group row">
+        <button class="btn btn-info col-sm-4" (click)="reset()">Reset</button>
+        <button class="btn btn-info col-sm-4" [disabled]="checkData()" (click)="editMeeting()">Edit meeting</button>
+        <button class="btn btn-info col-sm-4" [disabled]="checkData()" (click)="deleteMeeting()">Delete meeting</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Meeting search:</p>
+        <div class="input-group col-sm-8">
+          <input id="typeahead-basic-meeting" type="text" class="form-control" [(ngModel)]="foundMeeting" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchMeeting"/>
+        </div>
+        <button class="btn btn-info col-sm-2" (click)="chooseMeeting()">Choose</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Meeting id:</p>
+        <input type="text" [(ngModel)]="chosenMeeting.id"
+               class="form-control col-sm-10"
+               id="fmid"
+               name="fmid"
+               required #fmid="ngModel"
+               [disabled]="true">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Office id:</p>
+        <input type="text" [(ngModel)]="chosenMeeting.officeId"
+               class="form-control col-sm-10"
+               id="fmoid"
+               name="fmoid"
+               required #fmoid="ngModel"
+               [disabled]="true">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Room id:</p>
+        <input type="text" [(ngModel)]="chosenMeeting.roomId"
+               class="form-control col-sm-10"
+               id="fmrid"
+               name="fmrid"
+               required #fmrid="ngModel"
+               [disabled]="true">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Meeting theme:</p>
+        <input type="text" [(ngModel)]="chosenMeeting.name"
+               class="form-control col-sm-10"
+               id="fmname"
+               name="fmname"
+               required #fmname="ngModel"
+               [disabled]="true">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Start:</p>
+        <input type="text" [(ngModel)]="chosenMeeting.start"
+               class="form-control col-sm-10"
+               id="fmstart"
+               name="fmstart"
+               required #fmstart="ngModel"
+               [disabled]="true">
+      </div>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">End:</p>
+        <input type="text" [(ngModel)]="chosenMeeting.end"
+               class="form-control col-sm-10"
+               id="fmend"
+               name="fmend"
+               required #fmend="ngModel"
+               [disabled]="true">
+      </div>
+
+      <hr><hr>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Meeting theme:</p>
+        <input type="text" [(ngModel)]="meetingTheme"
+               class="form-control col-sm-10"
+               id="name"
+               name="name"
+               placeholder="Enter meeting theme"
+               required #name="ngModel">
+      </div>
+
+      <p *ngFor="let alert of alerts">
+        <ngb-alert [type]="alert.type" (closed)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+      </p>
+
+      <hr><hr>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Office:</p>
+        <table class="table table-bordered col-sm-10">
+          <tr>
+            <td>Id</td>
+            <td>City</td>
+            <td>Address</td>
+            <td>Phone</td>
+            <td>Open</td>
+            <td>Close</td>
+            <td>Choose button</td>
+          </tr>
+          <tr *ngFor="let office of offices; let i = index" [ngClass]="{'choose-accepted' : chosenOffice != 0}">
+            <td>{{office.id}}</td>
+            <td>{{office.city}}</td>
+            <td>{{office.address}}</td>
+            <td>{{office.phone}}</td>
+            <td>{{office.openTime}}</td>
+            <td>{{office.closeTime}}</td>
+            <td>
+              <button class="btn btn-info" [disabled]="chosenOffice != 0" (click)="chooseOffice(i)">Choose</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Room:</p>
+        <table class="table table-bordered col-sm-10">
+          <tr>
+            <td>Id</td>
+            <td>Office id</td>
+            <td>Cabinet</td>
+            <td>Capacity</td>
+            <td>Items</td>
+            <td>Choose button</td>
+          </tr>
+          <tr *ngFor="let room of rooms; let i = index" [ngClass]="{'choose-accepted' : chosenRoom != 0}">
+            <td>{{room.id}}</td>
+            <td>{{room.officeId}}</td>
+            <td>{{room.cabinet}}</td>
+            <td>{{room.capacity}}</td>
+            <td>{{room.itemsInRoom}}</td>
+            <td>
+              <button class="btn btn-info" [disabled]="chosenRoom != 0" (click)="chooseRoom(i)">Choose</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <hr><hr>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Date:</p>
+        <div class="input-group col-sm-10">
+          <input class="form-control" placeholder="yyyy-mm-dd"
+                 name="dp" [(ngModel)]="meetingDate" ngbDatepicker #d="ngbDatepicker">
+          <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+        </div>
+        <!--        <button class="btn btn-info col-sm-2" (click)="chooseDate()">Choose</button>-->
+      </div>
+
+      <hr><hr>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Not available time:</p>
+        <table class="table table-bordered col-sm-10">
+          <tr>
+            <td>Meeting name</td>
+            <td>Start time</td>
+            <td>End time</td>
+          </tr>
+          <tr *ngFor="let meeting of roomMeetings  | dayPipe : meetingDate; let i = index">
+            <td>{{meeting.name}}</td>
+            <td>{{meeting.start | date: 'MMM d, y H:mm:ss' : 'UTC'}}</td>
+            <td>{{meeting.end | date: 'MMM d, y H:mm:ss' : 'UTC'}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <hr><hr>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Start time:</p>
+        <div class="input-group col-sm-4">
+          <ngb-timepicker [(ngModel)]="startTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+        </div>
+        <p class="col-sm-2 col-form-label">End time:</p>
+        <div class="input-group col-sm-4">
+          <ngb-timepicker [(ngModel)]="endTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+        </div>
+      </div>
+
+      <hr><hr>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Employee search:</p>
+        <div class="input-group col-sm-8">
+          <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="foundEmployee" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchEmployee"/>
+        </div>
+        <button class="btn btn-info col-sm-2" (click)="inviteEmployee()">Invite</button>
+
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Invites:</p>
+        <table class="table table-bordered col-sm-10">
+          <tr>
+            <td>Index</td>
+            <td>Name</td>
+            <td>Delete</td>
+          </tr>
+          <tr *ngFor="let employee of inviteEmployees; let i = index">
+            <td>{{i}}</td>
+            <td>{{employee}}</td>
+            <button class="btn btn-info" (click)="deleteFromInvites(i)">Remove</button>
+          </tr>
+        </table>
+      </div>
+
+    </form>
+  </div>
+</div>

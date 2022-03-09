@@ -4,9 +4,14 @@
       <div class="card bg-dark my-5">
         <div class="card-body">
           <h2 class="card-title text-center text-white py-3">{{ title }}</h2>
-          <ul class="text-center list-inline py-3">
+          <h4 *ngIf="authService.auth" class="card-title text-center text-white py-3">Hello, {{ authService.username}}!</h4>
+          <br>
+          <ul *ngIf="authService.auth"  class="text-center list-inline py-3">
             <li class="list-inline-item">
               <a routerLink="/" class="btn btn-info">Home</a>
+            </li>
+            <li class="list-inline-item">
+              <a routerLink="/new-meeting" class="btn btn-info">New meeting</a>
             </li>
             <li class="list-inline-item">
               <a routerLink="/profile" class="btn btn-info">Profile</a>
@@ -14,6 +19,18 @@
             <li class="list-inline-item logout">
               <a (click)="logout()" routerLink="/login" class="btn btn-info">Logout</a>
             </li>
+          </ul>
+          <ul *ngIf="authService.auth && authService.admin" class="text-center list-inline py-3">
+            <li class="list-inline-item">
+              <a routerLink="/employees" class="btn btn-info">Employees</a>
+            </li>
+            <li class="list-inline-item">
+              <a routerLink="/offices" class="btn btn-info">Offices</a>
+            </li>
+            <li class="list-inline-item">
+              <a routerLink="/meetings" class="btn btn-info">Meetings</a>
+            </li>
+
           </ul>
         </div>
       </div>

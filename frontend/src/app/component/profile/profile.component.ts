@@ -2,24 +2,39 @@ import { Component, OnInit } from '@angular/core';
 import {AuthService} from "../../service/auth.service";
 import {EmployeeService} from "../../service/employee.service";
 import {timeout} from "rxjs";
+import {Employee} from "../../model/employee";
+import {HaveAlert} from "../../model/have-alert";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent  extends HaveAlert implements OnInit {
+
 
   username: string | null;
   password: string = "";
   repeatPassword: string = "";
+  employee: Employee = new Employee({id: 0, officeId: 0, name: '', position: '', email: ''});
 
-  message: string = "";
-
-  constructor(public authService: AuthService, private employeeService: EmployeeService) { }
+  constructor(public authService: AuthService,
+              private router: Router,
+              private employeeService: EmployeeService) {
+    super();
+  }
 
   ngOnInit(): void {
-    this.username = localStorage.getItem("username");
+    if(this.authService.checkExpire()) {
+      this.router.navigate(['login']);
+    } else {
+
+      this.username = localStorage.getItem("username");
+      this.employeeService.getEmployee(localStorage.getItem("id")).subscribe((employee) => {
+        this.employee = employee;
+      });
+    }
     console.log("init profile");
   }
 
@@ -31,15 +46,14 @@ export class ProfileComponent implements OnInit {
     console.log("change password");
 
     this.employeeService.changePassword(localStorage.getItem("id"), this.password).subscribe(() => {
-      this.message = 'Password was changed!';
       this.password = '';
       this.repeatPassword = '';
-      setTimeout(() => {
-        this.message = '';
-      }, 3000);
+      this.alerts.push({
+        type: 'success',
+        message: 'Password was changed!'
+      });
     })
-
-
   }
+
 
 }

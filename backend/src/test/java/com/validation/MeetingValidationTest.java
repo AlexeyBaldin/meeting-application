@@ -1,14 +1,10 @@
 package com.validation;
 
 
-import com.controller.MeetingRestController;
-import com.model.employee.Employee;
 import com.model.meeting.Meeting;
 import com.model.office.Office;
 import com.model.office.Room;
-import com.repository.employee.EmployeeRepository;
 import com.repository.meeting.MeetingRepository;
-import com.service.employee.EmployeeService;
 import com.service.meeting.MeetingService;
 import com.service.office.OfficeService;
 import org.junit.Assert;
@@ -18,15 +14,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,8 +86,8 @@ public class MeetingValidationTest {
         office.setAddress("Address");
         office.setCity("City");
         office.setPhone("88005553535");
-        office.setOpen(LocalTime.of(6, 0));
-        office.setClose(LocalTime.of(22, 0));
+        office.setOpenTime(LocalTime.of(6, 0));
+        office.setCloseTime(LocalTime.of(22, 0));
 
         Room room = new Room();
         room.setId(1);
@@ -123,7 +114,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(true);
         when(officeService.isRoomExists(1)).thenReturn(true);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
         Map<String, Object> result = meetingService.checkMeetingAndGetErrorsMap(object.meeting, object.employeesId);
@@ -136,7 +127,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(false);
         when(officeService.isRoomExists(1)).thenReturn(true);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
         Map<String, Object> result = meetingService.checkMeetingAndGetErrorsMap(object.meeting, object.employeesId);
@@ -149,7 +140,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(true);
         when(officeService.isRoomExists(1)).thenReturn(false);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
         Map<String, Object> result = meetingService.checkMeetingAndGetErrorsMap(object.meeting, object.employeesId);
@@ -162,7 +153,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(true);
         when(officeService.isRoomExists(1)).thenReturn(true);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
         object.meeting.setStart(new Timestamp(100, 0, 0, 0, 0, 0, 0));
@@ -177,7 +168,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(true);
         when(officeService.isRoomExists(1)).thenReturn(true);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
         object.meeting.setEnd(new Timestamp(100, 0, 0, 0, 0, 0, 0));
@@ -192,7 +183,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(true);
         when(officeService.isRoomExists(1)).thenReturn(true);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
 
@@ -209,7 +200,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(true);
         when(officeService.isRoomExists(1)).thenReturn(true);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
 
@@ -226,7 +217,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(true);
         when(officeService.isRoomExists(1)).thenReturn(true);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
         object.meeting2.setStart(new Timestamp(150, 2, 1, 15, 0, 0, 0));
@@ -242,7 +233,7 @@ public class MeetingValidationTest {
         when(officeService.isOfficeExists(1)).thenReturn(true);
         when(officeService.isRoomExists(1)).thenReturn(true);
         when(officeService.findOfficeById(1)).thenReturn(object.office);
-        when(meetingRepository.findAllByRoomId(1, 1)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllByRoomIdWithInvite(1, 1)).thenReturn(object.meetingList);
         when(officeService.findRoomById(1)).thenReturn(object.room);
 
         object.room.setCapacity(1);
@@ -301,7 +292,7 @@ public class MeetingValidationTest {
     @Test
     public void testCheckMeetingInviteActivateAcceptSuccess() {
         when(meetingRepository.findById(1)).thenReturn(java.util.Optional.ofNullable(object.meeting));
-        when(meetingRepository.findAllEmployeeMeetings(1, 1)).thenReturn(new ArrayList<>());
+        when(meetingRepository.findAllEmployeeAcceptedMeetings(1, 1)).thenReturn(new ArrayList<>());
 
         object.meeting.saveInvite(1);
 
@@ -325,7 +316,7 @@ public class MeetingValidationTest {
         object.meeting2.saveInvite(2);
 
         when(meetingRepository.findById(2)).thenReturn(java.util.Optional.ofNullable(object.meeting2));
-        when(meetingRepository.findAllEmployeeMeetings(1, 2)).thenReturn(object.meetingList);
+        when(meetingRepository.findAllEmployeeAcceptedMeetings(1, 2)).thenReturn(object.meetingList);
 
         String error = meetingService.activateInviteAndGetError(1, 2, true);
 

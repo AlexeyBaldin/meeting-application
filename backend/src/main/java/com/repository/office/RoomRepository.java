@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface RoomRepository extends JpaRepository<Room, Integer> {
     List<Room> findAllByOfficeId(Integer officeId);
 
-    Optional<Room> findByOfficeIdAndId(Integer officeId, Integer roomId);
+    Optional<Room> findRoomById(Integer roomId);
 
     Boolean existsByOfficeIdAndCabinet(@Param("office_id")Integer officeId, @Param("room_cabinet")Integer cabinet);
 }

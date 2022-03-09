@@ -62,8 +62,6 @@ public class UserService {
     public void updateUser(Integer userId, User newUser) {
         User user = findUserById(userId);
 
-        System.out.println(newUser.getUsername());
-
         if(newUser.getUsername() != null) {
             user.setUsername(newUser.getUsername());
         }

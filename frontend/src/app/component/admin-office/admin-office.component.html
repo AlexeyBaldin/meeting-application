@@ -1,0 +1,186 @@
+<div class="card my-5">
+  <div class="card-body">
+    <form #userForm="ngForm">
+
+      <div class="form-group row">
+        <button class="btn btn-info col-sm-3" (click)="reset()">Reset</button>
+        <button class="btn btn-info col-sm-3" [disabled]="checkOfficeData()" (click)="createNewOffice()">Register new office</button>
+        <button class="btn btn-info col-sm-3" [disabled]="checkOfficeData() || officeId == 0" (click)="editOffice()">Edit office data</button>
+        <button class="btn btn-info col-sm-3" [disabled]="officeId == 0" (click)="deleteOffice()">Delete office</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Office search:</p>
+        <div class="input-group col-sm-8">
+          <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="foundOffice" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchOffice"/>
+        </div>
+        <button class="btn btn-info col-sm-2" (click)="chooseOffice()">Choose</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Office id:</p>
+        <input type="text" [(ngModel)]="officeId"
+               class="form-control col-sm-10"
+               id="oid"
+               name="oid"
+               required #oid="ngModel"
+               [disabled]="true">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">City:</p>
+        <input type="text" [(ngModel)]="city"
+               class="form-control col-sm-10"
+               id="ocity"
+               name="ocity"
+               required #ocity="ngModel">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Address:</p>
+        <input type="text" [(ngModel)]="address"
+               class="form-control col-sm-10"
+               id="oaddress"
+               name="oaddress"
+               required #oaddress="ngModel">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Phone:</p>
+        <input type="text" [(ngModel)]="phone"
+               class="form-control col-sm-10"
+               id="ophone"
+               name="ophone"
+               required #ophone="ngModel">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Open time:</p>
+        <div class="input-group col-sm-4">
+          <ngb-timepicker [(ngModel)]="openTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+        </div>
+        <p class="col-sm-2 col-form-label">Close time:</p>
+        <div class="input-group col-sm-4">
+          <ngb-timepicker [(ngModel)]="closeTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+        </div>
+      </div>
+
+      <hr><hr>
+
+      <div class="form-group row">
+        <button class="btn btn-info col-sm-3" [disabled]="officeId == 0" (click)="resetItem()">Reset item</button>
+        <button class="btn btn-info col-sm-3" [disabled]="checkItemData() || officeId == 0" (click)="addNewItem()">Add new item</button>
+        <button class="btn btn-info col-sm-3" [disabled]="checkItemData() || itemId == 0 || officeId == 0" (click)="editItem()">Edit item</button>
+        <button class="btn btn-info col-sm-3" [disabled]="itemId == 0" (click)="deleteItem()">Delete item</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Search item in office:</p>
+        <div class="input-group col-sm-8">
+          <input id="typeahead-basic-item" type="text" class="form-control" [(ngModel)]="foundItemInOffice" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchItemInOffice"/>
+        </div>
+        <button class="btn btn-info col-sm-2" [disabled]="officeId == 0" (click)="chooseItemInOffice()">Choose</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Item id:</p>
+        <input type="text" [(ngModel)]="itemId"
+               class="form-control col-sm-10"
+               id="iid"
+               name="iid"
+               required #iid="ngModel"
+               [disabled]="true">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Item name:</p>
+        <input type="text" [(ngModel)]="itemName"
+               class="form-control col-sm-10"
+               id="iname"
+               name="iname"
+               required #iname="ngModel">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Item count:</p>
+        <input type="text" [(ngModel)]="itemCount"
+               class="form-control col-sm-10"
+               id="icount"
+               name="icount"
+               required #icount="ngModel">
+      </div>
+
+      <hr><hr>
+
+      <div class="form-group row">
+        <button class="btn btn-info col-sm-2" [disabled]="officeId == 0" (click)="resetRoom()">Reset room</button>
+        <button class="btn btn-info col-sm-2" [disabled]="checkRoomData() || officeId == 0" (click)="addNewRoom()">Add new room</button>
+        <button class="btn btn-info col-sm-2" [disabled]="checkRoomData() || roomId == 0 || officeId == 0" (click)="editRoom()">Edit room</button>
+        <button class="btn btn-info col-sm-2" [disabled]="roomId == 0" (click)="deleteRoom()">Delete room</button>
+        <button class="btn btn-info col-sm-2" [disabled]="roomId == 0 || itemId == 0 || itemName == ''" (click)="addItemToRoom()">Add item</button>
+        <button class="btn btn-info col-sm-2" [disabled]="roomId == 0 || itemId == 0 || itemName == ''" (click)="removeItemFromRoom()">Remove item</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Search room:</p>
+        <div class="input-group col-sm-8">
+          <input id="typeahead-basic-room" type="text" class="form-control" [(ngModel)]="foundRoomInOffice" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="searchRoomInOffice"/>
+        </div>
+        <button class="btn btn-info col-sm-2" [disabled]="officeId == 0" (click)="chooseRoomInOffice()">Choose</button>
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Room id:</p>
+        <input type="text" [(ngModel)]="roomId"
+               class="form-control col-sm-10"
+               id="rid"
+               name="rid"
+               required #rid="ngModel"
+               [disabled]="true">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Office id:</p>
+        <input type="text" [(ngModel)]="officeId"
+               class="form-control col-sm-10"
+               id="roid"
+               name="roid"
+               required #roid="ngModel"
+               [disabled]="true">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Cabinet:</p>
+        <input type="text" [(ngModel)]="roomCabinet"
+               class="form-control col-sm-10"
+               id="rcabinet"
+               name="rcabinet"
+               required #rcabinet="ngModel">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Capacity:</p>
+        <input type="text" [(ngModel)]="roomCapacity"
+               class="form-control col-sm-10"
+               id="rcapacity"
+               name="rcapacity"
+               required #rcapacity="ngModel">
+      </div>
+
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Items in room:</p>
+        <input type="text" [(ngModel)]="itemsInRoom"
+               class="form-control col-sm-10"
+               id="ritems"
+               name="ritems"
+               required #ritems="ngModel"
+               [disabled]="true">
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<p *ngFor="let alert of alerts">
+  <ngb-alert [type]="alert.type" (closed)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+</p>

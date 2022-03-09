@@ -1,45 +1,95 @@
-<p>profile works!</p>
-
 <div class="card my-5">
   <div class="card-body">
     <form #userForm="ngForm">
-      <div class="form-group">
-        <label for="name">Username</label>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Username:</p>
         <input type="text" [(ngModel)]="username"
-               class="form-control"
+               class="form-control col-sm-10"
                id="name"
                name="name"
                placeholder="Enter your name"
                required #name="ngModel"
                [disabled]="true">
       </div>
-      <div class="form-group">
-        <label for="pass">Password</label>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Password:</p>
         <input type="text" [(ngModel)]="password"
-               class="form-control"
+               class="form-control col-sm-10"
                id="pass"
                name="pass"
                placeholder="Enter new password"
                required #pass="ngModel">
       </div>
-      <div class="form-group">
-        <label for="pass2"></label>
+      <div class="form-group row">
+        <p class="col-sm-2 col-form-label">Repeat:</p>
         <input type="text" [(ngModel)]="repeatPassword"
-               class="form-control"
+               class="form-control col-sm-10"
                id="pass2"
                name="pass2"
                placeholder="Repeat new password"
                required #pass2="ngModel">
       </div>
-      <button type="button" (click)="changePassword()" [disabled]="!checkPasswords()"
-              class="btn btn-info">Submit</button>
-      {{message}}
+      <div class="button-center">
+        <button type="button" (click)="changePassword()" [disabled]="!checkPasswords()"
+                class="btn btn-info">Change password</button>
+      </div>
+
     </form>
   </div>
 </div>
 
+<p *ngFor="let alert of alerts">
+  <ngb-alert [type]="alert.type" (closed)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+</p>
+
 <div class="card my-5">
   <div class="card-body">
-    asdasdasd
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">User id:</p>
+      <input type="text" [(ngModel)]="employee.id"
+             class="form-control col-sm-10"
+             id="eid"
+             name="eid"
+             required #eid="ngModel"
+             [disabled]="true">
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Office id:</p>
+      <input type="text" [(ngModel)]="employee.officeId"
+             class="form-control col-sm-10"
+             id="officeId"
+             name="officeId"
+             required #officeId="ngModel"
+             [disabled]="true">
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Name:</p>
+      <input type="text" [(ngModel)]="employee.name"
+             class="form-control col-sm-10"
+             id="ename"
+             name="ename"
+             required #ename="ngModel"
+             [disabled]="true">
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Position:</p>
+      <input type="text" [(ngModel)]="employee.position"
+             class="form-control col-sm-10"
+             id="position"
+             name="position"
+             required #position="ngModel"
+             [disabled]="true">
+    </div>
+    <div class="form-group row">
+      <p class="col-sm-2 col-form-label">Email:</p>
+      <input type="text" [(ngModel)]="employee.email"
+             class="form-control col-sm-10"
+             id="email"
+             name="email"
+             required #email="ngModel"
+             [disabled]="true">
+    </div>
+
+
   </div>
 </div>

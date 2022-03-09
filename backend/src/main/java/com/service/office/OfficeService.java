@@ -1,8 +1,10 @@
 package com.service.office;
 
+import com.dto.query.ItemInRoom;
 import com.model.office.Item;
 import com.model.office.Office;
 import com.model.office.Room;
+import com.repository.meeting.MeetingRepository;
 import com.repository.office.ItemRepository;
 import com.repository.office.OfficeRepository;
 import com.repository.office.RoomRepository;
@@ -26,6 +28,9 @@ public class OfficeService {
 
     @Autowired
     ItemRepository itemRepository;
+
+    @Autowired
+    MeetingRepository meetingRepository;
 
 
     public List<Office> findAllOffices() {
@@ -91,14 +96,18 @@ public class OfficeService {
             errors.put("field(phone) error", check);
         }
 
-        check = checkOpenTimeAndGetError(newOffice.getOpen());
+        check = checkOpenTimeAndGetError(newOffice.getOpenTime());
         if(check != null) {
             errors.put("field(open) error", check);
         }
 
-        check = checkCloseTimeAndGetError(newOffice.getClose());
+        check = checkCloseTimeAndGetError(newOffice.getCloseTime());
         if(check != null) {
             errors.put("field(close) error", check);
+        }
+
+        if(newOffice.getOpenTime().isAfter(newOffice.getCloseTime())) {
+            errors.put("time error", "open time (" + newOffice.getOpenTime() + ") > close time (" + newOffice.getCloseTime() + ")");
         }
 
         return errors;
@@ -162,8 +171,8 @@ public class OfficeService {
         return roomRepository.findById(roomId).orElse(null);
     }
 
-    public Room findRoomByOfficeIdAndRoomId(Integer officeId, Integer roomId) {
-        return roomRepository.findByOfficeIdAndId(officeId, roomId).orElse(null);
+    public Room findRoomByRoomId(Integer roomId) {
+        return roomRepository.findById(roomId).orElse(null);
     }
 
     public boolean isRoomExists(Integer roomId) {
@@ -185,8 +194,11 @@ public class OfficeService {
         roomRepository.save(newRoom);
     }
 
-    public void deleteRoom(Integer officeId, Integer roomId) {
-        Room room = findRoomByOfficeIdAndRoomId(officeId, roomId);
+    public void deleteRoom(Integer roomId) {
+        Room room = findRoomById(roomId);
+
+        List<ItemInRoom> itemsInRoom = findAllItemsInRoom(roomId);
+        itemsInRoom.forEach(itemInRoom -> fullRemoveItemFromRoom(itemInRoom.getRoomId(), itemInRoom.getName()));
 
         roomRepository.delete(room);
     }
@@ -198,7 +210,7 @@ public class OfficeService {
 
 
     public int countItemInRoom(Integer officeId, Integer roomId, String itemName) {
-        Room room = findRoomByOfficeIdAndRoomId(officeId, roomId);
+        Room room = findRoomByRoomId(roomId);
         Item item = findItemByOfficeIdAndName(officeId, itemName);
 
         return room.countItemInRoom(item.getId());
@@ -207,7 +219,7 @@ public class OfficeService {
 
     public void addItemInRoom(Integer officeId, Integer roomId, String itemName, Integer itemCount) {
 
-        Room room = findRoomByOfficeIdAndRoomId(officeId, roomId);
+        Room room = findRoomByRoomId(roomId);
         Item item = findItemByOfficeIdAndName(officeId, itemName);
 
         room.addItem(item.getId(), itemCount);
@@ -217,15 +229,17 @@ public class OfficeService {
         saveItem(officeId, item);
     }
 
-    public void fullRemoveItemFromRoom(Integer officeId, Integer roomId, String itemName) {
-        Room room = findRoomByOfficeIdAndRoomId(officeId, roomId);
-        Item item = findItemByOfficeIdAndName(officeId, itemName);
+    public int fullRemoveItemFromRoom(Integer roomId, String itemName) {
+        Room room = findRoomByRoomId(roomId);
+        Item item = findItemByOfficeIdAndName(room.getOfficeId(), itemName);
 
         int count = room.fullRemoveItem(item.getId());
         item.setCount(item.getCount() + count);
 
-        saveRoom(officeId, room);
-        saveItem(officeId, item);
+        saveRoom(room.getOfficeId(), room);
+        saveItem(room.getOfficeId(), item);
+
+        return count;
     }
 
     public List<Item> findAllItems() {
@@ -262,7 +276,7 @@ public class OfficeService {
         return error;
     }
 
-    public Map<String, Object> checkItemAndGetErrorsMap(Integer officeId, Item newItem) {
+    public Map<String, Object> checkItemAndGetErrorsMap(Integer officeId, Item newItem, boolean update) {
 
         Map<String, Object> errors = new HashMap<>();
 
@@ -275,10 +289,15 @@ public class OfficeService {
             errors.put("field(count) error", check);
         }
 
-        check = checkItemNameAndGetError(officeId, newItem.getName());
+        if(update) {
+            check = FieldChecker.checkNullStringAndGetError(newItem.getName());
+        } else {
+            check = checkItemNameAndGetError(officeId, newItem.getName());
+        }
         if(check != null) {
             errors.put("field(name) error", check);
         }
+
 
         return errors;
     }
@@ -300,6 +319,14 @@ public class OfficeService {
         itemRepository.save(newItem);
     }
 
+    public void updateItem(Item newItem) {
+        Item item = findItemById(newItem.getId());
+
+        newItem.setRoomInventory(item.getRoomInventory());
+
+        itemRepository.save(newItem);
+    }
+
     public void updateItemCount(Integer itemId, Integer newItemCount) {
         Item item = findItemById(itemId);
         item.setCount(newItemCount);
@@ -309,6 +336,14 @@ public class OfficeService {
     public void deleteItem(Integer itemId) {
         Item item = findItemById(itemId);
         itemRepository.delete(item);
+    }
+
+    public List<ItemInRoom> findAllItemsInRoom(Integer roomId) {
+        return itemRepository.findAllItemsInRoom(roomId);
+    }
+
+    public List<Item> findAllItemsInOffice(Integer officeId) {
+        return itemRepository.findAllByOfficeId(officeId);
     }
 
 }

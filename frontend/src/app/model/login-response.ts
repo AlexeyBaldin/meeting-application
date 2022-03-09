@@ -3,4 +3,5 @@ export class LoginResponse {
   username: string;
   id: number;
   token: string;
+  expire: Date;
 }
