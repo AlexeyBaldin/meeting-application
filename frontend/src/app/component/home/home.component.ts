@@ -66,7 +66,7 @@ export class HomeComponent extends HaveAlert implements OnInit {
 
   acceptMeeting(index: number): void {
     console.log(index);
-    if(this.meetings[index].accept != 1) {
+    if(this.meetings[index].accept != 1 && this.meetings[index].accept != -1) {
       this.meetingService.acceptMeeting(Number(localStorage.getItem('id')), this.meetings[index].id).subscribe(() => {
         this.meetings[index].accept = 1;
       }, (response) => {
@@ -81,7 +81,7 @@ export class HomeComponent extends HaveAlert implements OnInit {
 
   declineMeeting(index: number): void {
     console.log(index);
-    if(this.meetings[index].accept != 2) {
+    if(this.meetings[index].accept != 2 && this.meetings[index].accept != -1) {
       this.meetingService.declineMeeting(Number(localStorage.getItem('id')), this.meetings[index].id).subscribe(() => {
         this.meetings[index].accept = 2;
       });

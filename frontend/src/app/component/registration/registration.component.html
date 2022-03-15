@@ -7,7 +7,7 @@
         <button class="btn btn-info col-sm-3" [disabled]="checkEmployeeData() || mail.invalid" (click)="createNewEmployee()">Register new employee</button>
         <button class="btn btn-info col-sm-3" [disabled]="checkEmployeeData() || mail.invalid" (click)="editEmployee()">Edit employee data</button>
         <button class="btn btn-info col-sm-3" [disabled]="checkUserData()" (click)="editUser()">Edit user data</button>
-        <button class="btn btn-info col-sm-3" [disabled]="employeeId == 0" (click)="deleteEmployee()">Delete employee</button>
+        <button class="btn btn-info col-sm-3" [disabled]="employeeId == 0  || employeeId == 1" (click)="deleteEmployee()">Delete employee</button>
       </div>
 
 
@@ -51,7 +51,8 @@
                class="form-control col-sm-10"
                id="pos"
                name="pos"
-               required #pos="ngModel">
+               required #pos="ngModel"
+               [disabled]="employeeId == 1">
       </div>
       <div class="form-group row">
         <p class="col-sm-2 col-form-label">Email:</p>
@@ -71,7 +72,8 @@
                id="uname"
                name="uname"
                placeholder="Enter new name"
-               required #uname="ngModel">
+               required #uname="ngModel"
+               [disabled]="employeeId == 1">
       </div>
       <div class="form-group row">
         <p class="col-sm-2 col-form-label">Password:</p>
