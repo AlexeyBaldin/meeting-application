@@ -321,7 +321,8 @@ public class MeetingValidationTest {
 
         String error = meetingService.activateInviteAndGetError(1, 2, true);
 
-        Assert.assertEquals("Employee meeting intersects with meetings with ids: 1", error);
+        Assert.assertEquals("Employee meeting intersects with meetings: |Test|", error);
+
     }
 
 
