@@ -105,6 +105,7 @@ export class RegistrationComponent extends HaveAlert implements OnInit {
           type: 'success',
           message: 'New employee was registered! Login: ' + response['login']
         });
+        this.reset();
       }, (error) => {
         let errorMap = error['error'];
         for (const errorMapElement in errorMap) {
@@ -114,6 +115,12 @@ export class RegistrationComponent extends HaveAlert implements OnInit {
               message: errorMapElement + ': ' + errorMap[errorMapElement]
             });
           }
+        }
+        if(error['status'] == 404) {
+          this.alerts.push({
+            type: 'warning',
+            message: 'Office with id = ' + this.officeId + ' does`t exist'
+          });
         }
       });
   }
@@ -126,6 +133,7 @@ export class RegistrationComponent extends HaveAlert implements OnInit {
           type: 'success',
           message: 'Success edit employee data'
         });
+        this.reset();
       }, (error) => {
         let errorMap = error['error'];
         for (const errorMapElement in errorMap) {
@@ -135,6 +143,12 @@ export class RegistrationComponent extends HaveAlert implements OnInit {
               message: errorMapElement + ': ' + errorMap[errorMapElement]
             });
           }
+        }
+        if(error['status'] == 404) {
+          this.alerts.push({
+            type: 'warning',
+            message: 'Office with id = ' + this.officeId + ' does`t exist'
+          });
         }
       });
   }
@@ -146,6 +160,7 @@ export class RegistrationComponent extends HaveAlert implements OnInit {
           type: 'success',
           message: 'Success edit user data'
         });
+        this.reset();
       }, (error) => {
         let errorMap = error['error'];
         for (const errorMapElement in errorMap) {
