@@ -18,7 +18,7 @@ export class EmployeeService {
   constructor(private httpClient: HttpClient, public authService: AuthService) { }
 
   changePassword(employeeId: string | null, password: string) : Observable<ResponseMap> {
-    return this.httpClient.put<any>(environment.adminUrl + 'user/' + employeeId, {password})
+    return this.httpClient.put<any>(environment.forAllUrl + 'user/' + employeeId, {password})
       .pipe(map(response=> {
         return response;
       }));
@@ -64,7 +64,11 @@ export class EmployeeService {
   editUser(id: number ,username: string, password: string) {
     let hashString = Encrypter.encryptPassword(password);
 
-    return this.httpClient.put<any>(environment.adminUrl + 'user/' + id, {username, hashString})
+    let user: User = new User({id: id, username: username, password: hashString, activation: true});
+
+    console.log(user);
+
+    return this.httpClient.put<any>(environment.forAllUrl + 'user/' + id, user)
       .pipe(map(response=> {
         return response;
       }));

@@ -1,6 +1,5 @@
 <form>
 
-
   <table class="table table-bordered">
     <tr class="table-head">
       <td>Meeting id</td>
@@ -23,10 +22,10 @@
         <button class="btn btn-info" (click)="meetingInfo(i)">Information</button>
       </td>
       <td>
-        <button class="btn btn-info" [disabled]="meetings[i].accept == 1" (click)="acceptMeeting(i)">Accept</button>
+        <button class="btn btn-info" [disabled]="meetings[i].accept == 1 || meetings[i].accept == -1" (click)="acceptMeeting(i)">Accept</button>
       </td>
       <td>
-        <button class="btn btn-info" [disabled]="meetings[i].accept == 2" (click)="declineMeeting(i)">Decline</button>
+        <button class="btn btn-info" [disabled]="meetings[i].accept == 2 || meetings[i].accept == -1" (click)="declineMeeting(i)">Decline</button>
       </td>
     </tr>
   </table>

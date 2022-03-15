@@ -1,5 +1,6 @@
 export class Encrypter {
 
+
   public static encryptPassword(password: string): string {
     let stringBuilder: string = '';
 

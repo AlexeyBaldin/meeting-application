@@ -14,6 +14,8 @@ import java.util.List;
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
 
+    List<Meeting> findAllByOfficeId(Integer officeId);
+
     @Query(value = "SELECT meeting.* FROM meeting" +
             " WHERE room_id = :room_id ORDER BY meeting.meeting_start",
             nativeQuery = true)

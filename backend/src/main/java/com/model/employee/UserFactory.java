@@ -22,7 +22,7 @@ public class UserFactory {
         return name.replaceAll(" ", "").toLowerCase() + id;
     }
 
-    private static String generatePassword(String password) {
+    public static String generatePassword(String password) {
         return encryptPassword(password.replaceAll(" ", "").toLowerCase());
     }
 
@@ -35,4 +35,5 @@ public class UserFactory {
 
         return user;
     }
+
 }

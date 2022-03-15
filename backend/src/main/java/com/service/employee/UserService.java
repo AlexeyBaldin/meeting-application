@@ -2,6 +2,7 @@ package com.service.employee;
 
 import com.model.employee.Role;
 import com.model.employee.User;
+import com.model.employee.UserFactory;
 import com.repository.employee.EmployeeRepository;
 import com.repository.employee.UserRepository;
 import com.util.FieldChecker;
@@ -66,6 +67,8 @@ public class UserService {
         if(newUser.getUsername() != null) {
             user.setUsername(newUser.getUsername());
         }
+
+
         if(newUser.getPassword() != null) {
             user.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
         }

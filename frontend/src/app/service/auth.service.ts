@@ -14,7 +14,7 @@ export class AuthService {
     this.auth = localStorage.getItem('expire') != null && !this.checkExpire();
     if(this.auth) {
       this.username = String(localStorage.getItem('username'));
-      this.admin = Boolean(localStorage.getItem('admin'));
+      this.admin = localStorage.getItem('admin') == 'true';
     }
   }
 

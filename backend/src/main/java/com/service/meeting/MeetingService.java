@@ -54,6 +54,13 @@ public class MeetingService {
             newMeeting.setInvites(new ArrayList<>());
         }
 
+        Timestamp start = newMeeting.getStart();
+        start.setHours(start.getHours() - start.getTimezoneOffset()/60);
+        newMeeting.setStart(start);
+        Timestamp end = newMeeting.getEnd();
+        end.setHours(end.getHours() - end.getTimezoneOffset()/60);
+        newMeeting.setEnd(end);
+
         return meetingRepository.save(newMeeting);
     }
 
@@ -64,7 +71,6 @@ public class MeetingService {
 
         List<Invite> invites = meeting.getInvites();
         invites.forEach(invite -> {
-
             List<Meeting> meetings = meetingRepository.findAllEmployeeAcceptedMeetings(invite.getEmployeeId(), meetingId);
             if(!"".equals(checkIntersectsAndGetError(meetings, meeting.getStart(), meeting.getEnd(), ""))) {
                 invite.setInviteAccept(0);
@@ -72,6 +78,13 @@ public class MeetingService {
         });
 
         newMeeting.setInvites(invites);
+
+        Timestamp start = newMeeting.getStart();
+        start.setHours(start.getHours() - start.getTimezoneOffset()/60);
+        newMeeting.setStart(start);
+        Timestamp end = newMeeting.getEnd();
+        end.setHours(end.getHours() - end.getTimezoneOffset()/60);
+        newMeeting.setEnd(end);
 
         meetingRepository.save(newMeeting);
     }
@@ -106,7 +119,7 @@ public class MeetingService {
         Meeting meeting = findMeetingById(meetingId);
 
         employeesId.forEach(meeting::saveInvite);
-        saveMeeting(meeting);
+        meetingRepository.save(meeting);
     }
 
     public String checkEmployeeTimeAndGetError(Integer employeeId, Integer meetingId, Timestamp start, Timestamp end) {
@@ -193,14 +206,12 @@ public class MeetingService {
         return FieldChecker.checkNullTimestampAndGetError(end);
     }
 
-    private String checkOfficeTimeAndGetError(Integer officeId, Timestamp start, Timestamp end) {
+    public String checkOfficeTimeAndGetError(Integer officeId, Timestamp start, Timestamp end) {
         Office office = officeService.findOfficeById(officeId);
 
-        Instant instant = Instant.now();
-        int offsetSeconds = ZoneId.systemDefault().getRules().getStandardOffset(instant).getTotalSeconds();
 
-        LocalTime startTime = start.toLocalDateTime().toLocalTime().minusSeconds(offsetSeconds);
-        LocalTime endTime = end.toLocalDateTime().toLocalTime().minusSeconds(offsetSeconds);
+        LocalTime startTime = start.toLocalDateTime().toLocalTime();
+        LocalTime endTime = end.toLocalDateTime().toLocalTime();
 
 
         if(!(startTime.isAfter(office.getOpenTime()) && startTime.isBefore(office.getCloseTime())) ||
@@ -225,6 +236,9 @@ public class MeetingService {
         }
 
         if(start != null && end != null) {
+            start.setHours(start.getHours() + start.getTimezoneOffset()/60);
+            end.setHours(end.getHours() + end.getTimezoneOffset()/60);
+
             if(start.getTime() <= new Timestamp(System.currentTimeMillis()).getTime()) {
                 errors.put("start time error", "start time (" + start + ") <= current time");
             }
