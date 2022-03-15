@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from "../../service/auth.service";
 import {EmployeeService} from "../../service/employee.service";
-import {timeout} from "rxjs";
 import {Employee} from "../../model/employee";
 import {HaveAlert} from "../../model/have-alert";
 import {Router} from "@angular/router";
+
 
 @Component({
   selector: 'app-profile',

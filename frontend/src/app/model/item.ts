@@ -4,7 +4,6 @@ export class Item {
   count: number;
   name: string;
 
-
   constructor(item: Item) {
     this.id = item.id;
     this.officeId = item.officeId;

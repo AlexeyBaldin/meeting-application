@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Office} from "../../model/office";
 import {debounceTime, distinctUntilChanged, map, Observable} from "rxjs";
-import {Employee} from "../../model/employee";
 import {AuthService} from "../../service/auth.service";
 import {OfficeService} from "../../service/office.service";
 import {HaveAlert} from "../../model/have-alert";
@@ -19,6 +18,7 @@ export class AdminOfficeComponent extends HaveAlert implements OnInit {
 
   offices: Office[] = [];
   foundOffice: Office;
+
 
   officeId: number = 0;
   city: string = '';

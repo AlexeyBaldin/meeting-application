@@ -10,16 +10,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
 
     @Query(value = "SELECT meeting.* FROM meeting" +
-            " WHERE room_id = :room_id ORDER BY meeting.meeting_start ASC",
+            " WHERE room_id = :room_id ORDER BY meeting.meeting_start",
             nativeQuery = true)
     List<Meeting> findAllByRoomId(@Param("room_id")Integer roomId);
 
     @Query(value = "SELECT DISTINCT meeting.* FROM meeting JOIN invite USING(meeting_id)" +
-            " WHERE room_id = :room_id AND meeting_id != :meeting_id ORDER BY meeting.meeting_start ASC",
+            " WHERE room_id = :room_id AND meeting_id != :meeting_id ORDER BY meeting.meeting_start",
             nativeQuery = true)
     List<Meeting> findAllByRoomIdWithInvite(@Param("room_id")Integer roomId, @Param("meeting_id") Integer meetingId);
 

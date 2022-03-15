@@ -6,7 +6,6 @@ export class Meeting {
   start: Date | string;
   end: Date | string;
 
-
   constructor(meeting: Meeting) {
     this.id = meeting.id;
     this.name = meeting.name;

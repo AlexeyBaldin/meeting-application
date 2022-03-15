@@ -7,4 +7,5 @@ export class MeetingWithInvite {
   start: Date;
   end: Date;
   accept: number;
+
 }

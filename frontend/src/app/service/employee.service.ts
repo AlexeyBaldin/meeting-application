@@ -1,4 +1,4 @@
-import {map, Observable, pipe} from "rxjs";
+import {map, Observable} from "rxjs";
 import {ResponseMap} from "../model/response-map";
 import {environment} from "../../environments/environment";
 import {HttpClient} from "@angular/common/http";
@@ -7,14 +7,15 @@ import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {Employee} from "../model/employee";
 import {User} from "../model/user";
-import {Hasher} from "../util/hasher";
+import {Encrypter} from "../util/encrypter";
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeeService {
 
-  constructor(private httpClient: HttpClient, public authService: AuthService, private router: Router) { }
+  constructor(private httpClient: HttpClient, public authService: AuthService) { }
 
   changePassword(employeeId: string | null, password: string) : Observable<ResponseMap> {
     return this.httpClient.put<any>(environment.adminUrl + 'user/' + employeeId, {password})
@@ -60,10 +61,8 @@ export class EmployeeService {
       }))
   }
 
-
-
   editUser(id: number ,username: string, password: string) {
-    let hashString = Hasher.hashPassword(password);
+    let hashString = Encrypter.encryptPassword(password);
 
     return this.httpClient.put<any>(environment.adminUrl + 'user/' + id, {username, hashString})
       .pipe(map(response=> {
@@ -75,7 +74,7 @@ export class EmployeeService {
     return this.httpClient.delete<ResponseMap>(environment.adminUrl + 'employee/' + id)
       .pipe(map(response => {
         return response;
-      }))
+      }));
   }
 }
 

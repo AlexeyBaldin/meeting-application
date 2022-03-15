@@ -4,7 +4,6 @@ export class User {
   password: string = '';
   activation: boolean = false;
 
-
   constructor(user: User) {
     this.id = user.id;
     this.username = user.username;

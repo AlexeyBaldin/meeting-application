@@ -1,6 +1,5 @@
 package com.model.employee;
 
-import java.util.Objects;
 
 public class UserFactory {
 
@@ -8,14 +7,15 @@ public class UserFactory {
 
     }
 
-    private static String hashPassword(String password) {
-        int hash = 0;
+    private static String encryptPassword(String password) {
+        StringBuilder stringBuilder = new StringBuilder();
 
         for (int i = 0; i < password.length(); i++) {
-            char c = password.charAt(i);
-            hash = ((hash << 5) - hash) + c;
+            int c = password.charAt(i) + i;
+            stringBuilder.append(c);
         }
-        return Integer.toString(hash);
+
+        return stringBuilder.toString();
     }
 
     private static String generateLogin(String name, int id) {
@@ -23,7 +23,7 @@ public class UserFactory {
     }
 
     private static String generatePassword(String password) {
-        return hashPassword(password.replaceAll(" ", "").toLowerCase());
+        return encryptPassword(password.replaceAll(" ", "").toLowerCase());
     }
 
     public static User createUser(Employee employee) {

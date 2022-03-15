@@ -3,10 +3,10 @@
 
 ## Contents
 
-1. [About](#About)
-    + [Description](#Description)
-    + [Features](#Features)
-2. [Technologies](#Technologies)
+1. [About](#about)
+    + [Description](#description)
+    + [Features](#features)
+2. [Technologies](#technologies)
 
 
 ## About
@@ -21,7 +21,6 @@ The application contains features like:
  + Storing users and their meetings information
  + Scheduling local meetings
    + Create, edit, cancel
- + Sending notifications to users
  
 
 ## Technologies
@@ -35,7 +34,9 @@ The application contains features like:
      + Junit (https://junit.org)
      + Mockito (https://site.mockito.org/)
      + Swagger (https://swagger.io/)
- + Frontend - `Future`
+ + Frontend
+   + Angular (https://angular.io/)
+   + Bootstrap (https://getbootstrap.com/)
 
 
 ## ©Alexey Baldin, 2022

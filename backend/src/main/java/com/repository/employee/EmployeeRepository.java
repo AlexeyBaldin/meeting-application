@@ -16,4 +16,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
             " WHERE meeting_id = :meeting_id",
             nativeQuery = true)
     List<Employee> findAllEmployeeByMeetingId(@Param("meeting_id") Integer meetingId);
+
 }

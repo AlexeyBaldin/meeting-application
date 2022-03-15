@@ -1,4 +1,3 @@
-import {Time} from "@angular/common";
 
 export class Office {
   id: number;
@@ -7,7 +6,6 @@ export class Office {
   phone: string;
   openTime: string;
   closeTime: string;
-
 
   constructor(office: Office) {
     this.id = office.id;

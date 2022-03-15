@@ -4,7 +4,6 @@ export class ItemInRoom {
   name: string;
   itemCount: number;
 
-
   constructor(itemInRoom: ItemInRoom) {
     this.id = itemInRoom.id;
     this.roomId = itemInRoom.roomId;

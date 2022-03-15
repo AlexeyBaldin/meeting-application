@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping(value = "/rest/auth")
 public class AuthenticationController {
@@ -36,8 +37,7 @@ public class AuthenticationController {
     public ResponseEntity<Map<String, Object>> login(@RequestBody AuthenticationRequestDto authenticationRequestDto) {
         try {
             String username = authenticationRequestDto.getUsername();
-            System.out.println(username);
-            System.out.println(authenticationRequestDto.getPassword());
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,
                     authenticationRequestDto.getPassword()));
 

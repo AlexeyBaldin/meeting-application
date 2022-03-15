@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+
 @Entity
 @IdClass(RoomInventoryId.class)
 @Table(name="room_inventory")

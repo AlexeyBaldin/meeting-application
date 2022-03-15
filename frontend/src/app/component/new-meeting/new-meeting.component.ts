@@ -10,10 +10,8 @@ import {Room} from "../../model/room";
 import {NgbDateStruct} from "@ng-bootstrap/ng-bootstrap";
 import {Meeting} from "../../model/meeting";
 import {Employee} from "../../model/employee";
-import {debounceTime, distinctUntilChanged, map, Observable, OperatorFunction} from "rxjs";
-import {ResponseMap} from "../../model/response-map";
+import {debounceTime, distinctUntilChanged, map, Observable} from "rxjs";
 import {HaveAlert} from "../../model/have-alert";
-import {ItemInRoom} from "../../model/item-in-room";
 import {Router} from "@angular/router";
 
 
@@ -25,6 +23,7 @@ import {Router} from "@angular/router";
 export class NewMeetingComponent extends HaveAlert implements OnInit {
 
   meetingTheme: string = '';
+
 
   offices: Office[] = [];
   chosenOffice: number = 0;

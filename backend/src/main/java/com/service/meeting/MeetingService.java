@@ -2,6 +2,7 @@ package com.service.meeting;
 
 import com.dto.query.MeetingWithInvite;
 import com.model.employee.Employee;
+import com.model.meeting.Invite;
 import com.model.meeting.Meeting;
 import com.model.office.Office;
 import com.model.office.Room;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @Service
 public class MeetingService {
@@ -59,7 +61,17 @@ public class MeetingService {
         Meeting meeting = findMeetingById(meetingId);
 
         newMeeting.setId(meetingId);
-        newMeeting.setInvites(meeting.getInvites());
+
+        List<Invite> invites = meeting.getInvites();
+        invites.forEach(invite -> {
+
+            List<Meeting> meetings = meetingRepository.findAllEmployeeAcceptedMeetings(invite.getEmployeeId(), meetingId);
+            if(!"".equals(checkIntersectsAndGetError(meetings, meeting.getStart(), meeting.getEnd(), ""))) {
+                invite.setInviteAccept(0);
+            }
+        });
+
+        newMeeting.setInvites(invites);
 
         meetingRepository.save(newMeeting);
     }
@@ -100,7 +112,7 @@ public class MeetingService {
     public String checkEmployeeTimeAndGetError(Integer employeeId, Integer meetingId, Timestamp start, Timestamp end) {
         List<Meeting> meetings = meetingRepository.findAllEmployeeAcceptedMeetings(employeeId, meetingId);
 
-        return checkIntersectsAndGetError(meetings, start, end, "Employee meeting intersects with meetings with ids: ");
+        return checkIntersectsAndGetError(meetings, start, end, "Employee meeting intersects with meetings: |");
     }
 
     public String activateInviteAndGetError(Integer employeeId, Integer meetingId, Boolean accept) {
@@ -237,7 +249,7 @@ public class MeetingService {
     private String checkRoomAndGetError(Integer meetingId, Integer roomId, Timestamp start, Timestamp end) {
         List<Meeting> meetings = meetingRepository.findAllByRoomIdWithInvite(roomId, meetingId);
 
-        return checkIntersectsAndGetError(meetings, start, end, "Meeting time intersects with meetings with ids: ");
+        return checkIntersectsAndGetError(meetings, start, end, "Meeting time intersects with meetings: |");
     }
 
     private String checkIntersectsAndGetError(List<Meeting> meetings, Timestamp start, Timestamp end, String startedString) {
@@ -246,7 +258,7 @@ public class MeetingService {
         if(!meetings.isEmpty()) {
             for (Meeting meeting : meetings) {
                 if(!(meeting.getEnd().getTime() <= start.getTime() || meeting.getStart().getTime() >= end.getTime())) {
-                    error.append(meeting.getId()).append(" ");
+                    error.append(meeting.getName()).append("|");
                     intersects++;
                 }
             }
@@ -261,8 +273,6 @@ public class MeetingService {
 
     public Map<String, Object> checkMeetingAndGetErrorsMap(Meeting newMeeting, List<Integer> employeesId) {
         Map<String, Object> errors = new HashMap<>();
-
-        System.out.println(newMeeting.getStart());
 
         if(!officeService.isOfficeExists(newMeeting.getOfficeId())) {
             errors.put("field(officeId) error", "office with id = " + newMeeting.getOfficeId() + " does`t exist");

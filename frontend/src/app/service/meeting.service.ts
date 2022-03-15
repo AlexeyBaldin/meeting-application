@@ -1,13 +1,13 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "./auth.service";
-import {Router} from "@angular/router";
 import {MeetingWithInvite} from "../model/meeting-with-invite";
-import {catchError, map, Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {ResponseMap} from "../model/response-map";
 import {environment} from "../../environments/environment";
 import {Meeting} from "../model/meeting";
 import {Employee} from "../model/employee";
+
 
 @Injectable({
   providedIn: 'root'

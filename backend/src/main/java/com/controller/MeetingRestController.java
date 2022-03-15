@@ -1,8 +1,5 @@
 package com.controller;
 
-import com.dto.MeetingAndEmployeesIdDto;
-import com.dto.query.MeetingWithInvite;
-import com.model.employee.Employee;
 import com.model.meeting.Meeting;
 import com.service.employee.EmployeeService;
 import com.service.meeting.MeetingService;
@@ -14,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/admin/rest/meeting")

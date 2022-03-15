@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping(value = "/forall/rest")
 public class ForAllRestController {
@@ -37,7 +38,7 @@ public class ForAllRestController {
     UserService userService;
 
     @GetMapping("/employee/all")
-    public List<Employee> findAll() {
+    public List<Employee> findAllEmployees() {
         return employeeService.findAllEmployees();
     }
 
@@ -60,6 +61,7 @@ public class ForAllRestController {
     public ResponseEntity<List<MeetingWithInvite>> findAllEmployeeMeetingsWithInvite(@PathVariable(value = "employee_id") Integer employeeId) {
         if(employeeService.isEmployeeExist(employeeId)) {
             List<MeetingWithInvite> meetingWithInvites = meetingService.findAllEmployeeMeetingsWithInvite(employeeId);
+
             return ResponseEntity.ok().body(meetingWithInvites);
         } else {
             return ResponseEntity.notFound().build();

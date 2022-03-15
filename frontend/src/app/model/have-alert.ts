@@ -4,6 +4,7 @@ interface Alert {
 }
 
 export class HaveAlert {
+
   alerts: Alert[] = [];
 
   closeAlert(alert: Alert) {

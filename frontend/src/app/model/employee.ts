@@ -5,7 +5,6 @@ export class Employee {
   position: string = '';
   email: string = '';
 
-
   constructor(employee: Employee) {
     this.id = employee.id;
     this.officeId = employee.officeId;

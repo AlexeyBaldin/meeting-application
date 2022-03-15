@@ -2,6 +2,7 @@ package com.dto.query;
 
 import org.springframework.beans.factory.annotation.Value;
 
+
 public interface ItemInRoom {
 
     @Value("#{target.item_id}")

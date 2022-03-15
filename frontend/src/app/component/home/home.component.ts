@@ -42,11 +42,27 @@ export class HomeComponent extends HaveAlert implements OnInit {
         for(let i = 0; i < meetings.length; i++) {
           meetings[i].start = new Date(meetings[i].start);
           meetings[i].end = new Date(meetings[i].end);
+          if(meetings[i].end.getTime() < new Date().getTime()) {
+            meetings[i].accept = -1;
+          }
         }
+
+        meetings.sort((meeting1, meeting2) => {
+          if(meeting1.start.getTime() > meeting2.start.getTime()) {
+            return 1;
+          }
+          if(meeting1.start.getTime() < meeting2.start.getTime()) {
+            return -1;
+          }
+          return 0;
+        })
+
         this.meetings = meetings;
       });
     }
   }
+
+
 
   acceptMeeting(index: number): void {
     console.log(index);
@@ -76,16 +92,19 @@ export class HomeComponent extends HaveAlert implements OnInit {
     this.infoMeeting.meetingId = this.meetings[index].id;
     this.infoMeeting.officeId = this.meetings[index].officeId;
     this.infoMeeting.roomId = this.meetings[index].roomId;
-    this.infoMeeting.startTime = String(this.meetings[index].start).slice(0, 16);
-    this.infoMeeting.endTime = String(this.meetings[index].end).slice(0, 16);
+    this.infoMeeting.startTime = String(this.meetings[index].start).slice(0, 25);
+    this.infoMeeting.endTime = String(this.meetings[index].end).slice(0, 25);
     this.infoMeeting.meetingName = this.meetings[index].name;
+
 
     if(this.meetings[index].accept == 0) {
       this.infoMeeting.status = 'Not chosen';
     } else if(this.meetings[index].accept == 1) {
       this.infoMeeting.status = 'Accepted';
-    } else {
+    } else if(this.meetings[index].accept == 2) {
       this.infoMeeting.status = 'Declined';
+    } else {
+      this.infoMeeting.status = 'Is over';
     }
 
     this.officeService.getOfficeById(this.infoMeeting.officeId).subscribe(office => {

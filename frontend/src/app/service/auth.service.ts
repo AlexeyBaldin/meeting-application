@@ -3,8 +3,7 @@ import {LoginResponse} from "../model/login-response";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import {environment} from "../../environments/environment";
-import {Alert} from "bootstrap";
-import {HaveAlert} from "../model/have-alert";
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +29,7 @@ export class AuthService {
 
     return this.httpClient.post<LoginResponse>(environment.loginUrl, {username, password})
       .pipe(
-        map(
-          response => {
+        map(response => {
             console.log(123);
             localStorage.setItem('token', response.token);
             localStorage.setItem('username', response.username);
@@ -54,6 +52,8 @@ export class AuthService {
     if(new Date(String(localStorage.getItem('expire'))).getTime() < new Date().getTime()) {
       this.logout();
       this.expire = true;
+      console.log(new Date(String(localStorage.getItem('expire'))).getTime());
+      console.log(new Date().getTime());
     }
     return this.expire;
   }

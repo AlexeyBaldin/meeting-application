@@ -141,7 +141,6 @@ export class OfficeService {
 
   removeItemFromRoom(officeId: number, roomId: number, itemName: String) : Observable<ResponseMap> {
 
-
     return this.httpClient.delete<ResponseMap>(environment.adminUrl + 'office/' + officeId + '/room/' + roomId + '/item/' + itemName)
       .pipe(map(response => {
         return response;

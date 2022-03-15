@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Timestamp;
 
+
 public interface MeetingWithInvite {
 
     @Value("#{target.meeting_id}")

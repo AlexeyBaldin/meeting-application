@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+
 @Entity
 @IdClass(InviteId.class)
 @Table(name="invite")

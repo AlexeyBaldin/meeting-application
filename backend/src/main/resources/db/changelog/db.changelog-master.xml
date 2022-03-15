@@ -48,7 +48,11 @@
                                  onUpdate="CASCADE" onDelete="CASCADE"/>
 
         <sql>
-            ALTER TABLE room ADD CONSTRAINT capacity_check CHECK (room_capacity >= 0)
+            ALTER TABLE room ADD CONSTRAINT capacity_check CHECK (room_capacity >= 1)
+        </sql>
+
+        <sql>
+            ALTER TABLE room ADD CONSTRAINT cabinet_check CHECK (room_cabinet >= 1)
         </sql>
     </changeSet>
 
@@ -195,10 +199,10 @@
             <column name="office_id" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
-            <column name="meeting_start" type="TIMESTAMP">
+            <column name="meeting_start" type="TIMESTAMPTZ">
                 <constraints nullable="false"/>
             </column>
-            <column name="meeting_end" type="TIMESTAMP">
+            <column name="meeting_end" type="TIMESTAMPTZ">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -238,7 +242,7 @@
         <insert tableName="office">
             <column name="office_city" value="Default City"/>
             <column name="office_address" value="Central Office"/>
-            <column name="office_phone" value="77777777777"/>
+            <column name="office_phone" value="+77777777777"/>
             <column name="office_open" value="06:00:00"/>
             <column name="office_close" value="22:00:00"/>
         </insert>
@@ -246,6 +250,12 @@
         <insert tableName="room">
             <column name="office_id" value="1"/>
             <column name="room_cabinet" value="101"/>
+            <column name="room_capacity" value="10"/>
+        </insert>
+
+        <insert tableName="room">
+            <column name="office_id" value="1"/>
+            <column name="room_cabinet" value="102"/>
             <column name="room_capacity" value="10"/>
         </insert>
 
@@ -258,16 +268,16 @@
         </insert>
 
         <insert tableName="employee">
-            <column name="employee_name" value="admin"/>
-            <column name="employee_position" value="admin"/>
-            <column name="employee_email" value="admin@admin.admin"/>
+            <column name="employee_name" value="Alexey Baldin"/>
+            <column name="employee_position" value="Admin"/>
+            <column name="employee_email" value="kret906alex@gmail.com"/>
             <column name="office_id" value="1"/>
         </insert>
 
         <insert tableName="user_data">
             <column name="employee_id" value="1"/>
             <column name="user_username" value="admin"/>
-            <column name="user_password" value="$2a$12$wDzmNMTjpzYR5jsyOHHsz.wuUIMAC0sBJ3FsaGd648XfBlmj77Tjm"/>
+            <column name="user_password" value="$2a$12$0H7iTkEVdwtbL7XKto.7AuMoeXi.PVssJ6AJs77488.UdYI8VUT6."/>
         </insert>
 
         <insert tableName="user_role">
@@ -280,11 +290,112 @@
             <column name="role_id" value="2"/>
         </insert>
 
-<!--        <insert tableName="items">-->
-<!--            <column name="office_id" value="1"/>-->
-<!--            <column name="item_name" value="Projector"/>-->
-<!--            <column name="item_count" value="10"/>-->
-<!--        </insert>-->
+        <insert tableName="employee">
+            <column name="employee_name" value="Walter White"/>
+            <column name="employee_position" value="Chemist"/>
+            <column name="employee_email" value="heisenberg@gmail.com"/>
+            <column name="office_id" value="1"/>
+        </insert>
+
+        <insert tableName="user_data">
+            <column name="employee_id" value="2"/>
+            <column name="user_username" value="walterwhite"/>
+            <column name="user_password" value="$2a$12$mloM1zKrOAmlVd.laoIcxeXdrzWO8MeY8KcGdtNSHfDRTaBof4RAG"/>
+        </insert>
+
+        <insert tableName="user_role">
+            <column name="employee_id" value="2"/>
+            <column name="role_id" value="2"/>
+        </insert>
+
+        <insert tableName="employee">
+            <column name="employee_name" value="Finn The Human"/>
+            <column name="employee_position" value="Hero"/>
+            <column name="employee_email" value="finnthehuman@gmail.com"/>
+            <column name="office_id" value="1"/>
+        </insert>
+
+        <insert tableName="user_data">
+            <column name="employee_id" value="3"/>
+            <column name="user_username" value="finnthehuman"/>
+            <column name="user_password" value="$2a$12$PpKGSCPEgcBNf/Bffg8Vc.eVwhnZFCHiMZueF.5dX.5vw33WhE9cS"/>
+        </insert>
+
+        <insert tableName="user_role">
+            <column name="employee_id" value="3"/>
+            <column name="role_id" value="2"/>
+        </insert>
+
+        <insert tableName="items">
+            <column name="office_id" value="1"/>
+            <column name="item_name" value="Projector"/>
+            <column name="item_count" value="10"/>
+        </insert>
+
+        <insert tableName="items">
+            <column name="office_id" value="1"/>
+            <column name="item_name" value="Flower"/>
+            <column name="item_count" value="50"/>
+        </insert>
+
+        <insert tableName="room_inventory">
+            <column name="room_id" value="1"/>
+            <column name="item_id" value="1"/>
+            <column name="item_count" value="1"/>
+        </insert>
+
+        <insert tableName="room_inventory">
+            <column name="room_id" value="2"/>
+            <column name="item_id" value="2"/>
+            <column name="item_count" value="3"/>
+        </insert>
+
+        <insert tableName="meeting">
+            <column name="meeting_name" value="Start meeting"/>
+            <column name="room_id" value="1"/>
+            <column name="office_id" value="1"/>
+            <column name="meeting_start" value="2022-03-14 10:00:00 +0:00"/>
+            <column name="meeting_end" value="2022-03-14 12:00:00 +0:00"/>
+        </insert>
+
+        <insert tableName="invite">
+            <column name="employee_id" value="1"/>
+            <column name="meeting_id" value="1"/>
+        </insert>
+
+        <insert tableName="invite">
+            <column name="employee_id" value="2"/>
+            <column name="meeting_id" value="1"/>
+        </insert>
+
+        <insert tableName="invite">
+            <column name="employee_id" value="3"/>
+            <column name="meeting_id" value="1"/>
+        </insert>
+
+        <insert tableName="meeting">
+            <column name="meeting_name" value="Testing meeting"/>
+            <column name="room_id" value="2"/>
+            <column name="office_id" value="1"/>
+            <column name="meeting_start" value="2022-03-20 15:00:00 +0:00"/>
+            <column name="meeting_end" value="2022-03-20 16:30:00 +0:00"/>
+        </insert>
+
+        <insert tableName="invite">
+            <column name="employee_id" value="1"/>
+            <column name="meeting_id" value="2"/>
+        </insert>
+
+        <insert tableName="invite">
+            <column name="employee_id" value="2"/>
+            <column name="meeting_id" value="2"/>
+        </insert>
+
+        <insert tableName="invite">
+            <column name="employee_id" value="3"/>
+            <column name="meeting_id" value="2"/>
+        </insert>
+
 
         <rollback>
             DELETE FROM office;

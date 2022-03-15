@@ -2,6 +2,7 @@ import {Pipe, PipeTransform} from "@angular/core";
 import {Meeting} from "../model/meeting";
 import {NgbDateStruct} from "@ng-bootstrap/ng-bootstrap";
 
+
 @Pipe({
   name: 'dayPipe',
   pure: false
@@ -14,3 +15,4 @@ export class DayPipe implements PipeTransform {
     });
   }
 }
+

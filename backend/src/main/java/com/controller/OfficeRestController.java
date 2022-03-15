@@ -1,19 +1,17 @@
 package com.controller;
 
-import com.dto.query.ItemInRoom;
 import com.model.office.Item;
 import com.model.office.Office;
 import com.model.office.Room;
-import com.model.office.RoomInventory;
 import com.service.office.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/admin/rest/office")

@@ -18,6 +18,7 @@ export class RegistrationComponent extends HaveAlert implements OnInit {
   employees: Employee[] = [];
   foundEmployee: Employee;
 
+
   employeeId: number = 0;
   employeeName: string = '';
   officeId: number = 0;
