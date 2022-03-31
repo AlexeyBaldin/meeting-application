@@ -52,21 +52,6 @@ public class EmployeeRestController {
         }
     }
 
-    /*@PostMapping("/save")
-    public ResponseEntity<Map<String, Object>> saveEmployee(@RequestBody Employee newEmployee) {
-
-        Map<String, Object> responseMap = employeeService.checkEmployeeAndGetErrorsMap(newEmployee);
-
-        if(responseMap.isEmpty()) {
-            employeeService.saveEmployee(newEmployee);
-            responseMap.put("success", true);
-            return ResponseEntity.ok().body(responseMap);
-        } else {
-            responseMap.put("success", false);
-            return ResponseEntity.badRequest().body(responseMap);
-        }
-
-    }*/
 
     @PutMapping("/{employee_id}")
     public ResponseEntity<Map<String, Object>> updateEmployee(@PathVariable(value = "employee_id") Integer employeeId,

@@ -34,4 +34,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
             nativeQuery = true)
     List<MeetingWithInvite> findAllEmployeeMeetingsWithInvite(@Param("employee_id") Integer employeeId);
 
+    List<Meeting> findAllByOfficeId(Integer officeId);
 }
