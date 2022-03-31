@@ -1,6 +1,7 @@
 package com.service.office;
 
 import com.dto.query.ItemInRoom;
+import com.model.meeting.Meeting;
 import com.model.office.Item;
 import com.model.office.Office;
 import com.model.office.Room;
@@ -12,6 +13,7 @@ import com.util.FieldChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +81,7 @@ public class OfficeService {
         return FieldChecker.checkPositiveIntegerAndGetError(capacity);
     }
 
-    public Map<String, Object> checkOfficeAndGetErrorsMap(Office newOffice) {
+    public Map<String, Object> checkOfficeAndGetErrorsMap(Office newOffice, boolean update) {
         Map<String, Object> errors = new HashMap<>();
 
         String check = checkCityAndGetError(newOffice.getCity());
@@ -111,7 +113,41 @@ public class OfficeService {
             errors.put("time error", "open time (" + newOffice.getOpenTime() + ") > close time (" + newOffice.getCloseTime() + ")");
         }
 
+        if(update) {
+            check = checkOfficeMeetingsAndGetError(newOffice);
+            if(check != null) {
+                errors.put("meetings error", check);
+            }
+        }
+
         return errors;
+    }
+
+    public String checkOfficeMeetingsAndGetError(Office newOffice) {
+        List<Meeting> meetings = meetingRepository.findAllByOfficeId(newOffice.getId());
+
+        StringBuilder error = new StringBuilder("|");
+        int intersects = 0;
+        if(!meetings.isEmpty()) {
+            for (Meeting meeting : meetings) {
+
+                LocalTime startTime = new Timestamp(meeting.getStart().getTime()).toLocalDateTime().toLocalTime();
+                LocalTime endTime = new Timestamp(meeting.getEnd().getTime()).toLocalDateTime().toLocalTime();
+
+                if(!(startTime.isAfter(newOffice.getOpenTime()) && startTime.isBefore(newOffice.getCloseTime())) ||
+                        !(endTime.isAfter(newOffice.getOpenTime()) && endTime.isBefore(newOffice.getCloseTime()))) {
+                    error.append(meeting.getName()).append("|");
+                    intersects++;
+                }
+            }
+        }
+
+
+        if(intersects != 0) {
+            return error.toString().trim();
+        } else {
+            return null;
+        }
     }
 
     public Map<String, Object> checkRoomAndGetErrorsMap(Integer officeId, Room newRoom) {

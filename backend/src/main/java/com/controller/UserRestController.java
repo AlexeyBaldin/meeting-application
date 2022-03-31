@@ -38,21 +38,6 @@ public class UserRestController {
         }
     }
 
-    /*@PostMapping("/save")
-    public ResponseEntity<Map<String, Object>> saveUser(@RequestBody User newUser) {
-
-        Map<String, Object> responseMap = userService.checkUserAndGetErrorsMap(newUser);
-
-        if(responseMap.isEmpty()) {
-            userService.saveUser(newUser);
-            responseMap.put("success", true);
-            return ResponseEntity.ok().body(responseMap);
-        } else {
-            responseMap.put("success", false);
-            return ResponseEntity.badRequest().body(responseMap);
-        }
-    }*/
-
 
 
     @PutMapping("/{user_id}/activation")

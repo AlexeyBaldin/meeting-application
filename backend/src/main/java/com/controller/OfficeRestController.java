@@ -39,7 +39,7 @@ public class OfficeRestController {
     @PostMapping("/save/office")
     public ResponseEntity<Map<String, Object>> saveOffice(@RequestBody Office newOffice) {
 
-        Map<String, Object> responseMap = officeService.checkOfficeAndGetErrorsMap(newOffice);
+        Map<String, Object> responseMap = officeService.checkOfficeAndGetErrorsMap(newOffice, false);
 
         if(responseMap.isEmpty()) {
             officeService.saveOffice(newOffice);
@@ -113,7 +113,7 @@ public class OfficeRestController {
                                                       @RequestBody Office newOffice) {
 
         if(officeService.isOfficeExists(officeId)) {
-            Map<String, Object> responseMap = officeService.checkOfficeAndGetErrorsMap(newOffice);
+            Map<String, Object> responseMap = officeService.checkOfficeAndGetErrorsMap(newOffice, true);
 
             if(responseMap.isEmpty()) {
                 newOffice.setId(officeId);
